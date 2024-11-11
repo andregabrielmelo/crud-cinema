@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model assentos {
+  id        Int         @id @default(autoincrement())
+  id_sala   Int
+  codigo    String      @db.VarChar(5)
+  vip       Boolean
+  salas     salas       @relation(fields: [id_sala], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "assentos_ibfk_1")
+  ingressos ingressos[]
+
+  @@index([id_sala], map: "id_sala")
+}
+
+model ingressos {
+  id            Int      @id @default(autoincrement())
+  id_sessao     Int
+  id_assento    Int
+  preco         Decimal? @db.Decimal(5, 2)
+  horario_venda DateTime @db.Timestamp(0)
+  sessoes       sessoes  @relation(fields: [id_sessao], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ingressos_ibfk_1")
+  assentos      assentos @relation(fields: [id_assento], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ingressos_ibfk_2")
+
+  @@index([id_assento], map: "id_assento")
+  @@index([id_sessao], map: "id_sessao")
+}
+
+model produtos {
+  id    Int     @id @default(autoincrement())
+  nome  String  @db.VarChar(50)
+  preco Decimal @db.Decimal(5, 2)
+}
+
+model salas {
+  id                Int        @id @default(autoincrement())
+  bloco             String     @db.Char(1)
+  numero            Int
+  total_de_assentos Int
+  assentos          assentos[]
+  sessoes           sessoes[]
+}
+
+model sessoes {
+  id              Int         @id @default(autoincrement())
+  id_sala         Int
+  nome_do_filme   String?     @db.VarChar(20)
+  horario_inicial DateTime    @db.Timestamp(0)
+  horario_final   DateTime    @db.Timestamp(0)
+  ingressos       ingressos[]
+  salas           salas       @relation(fields: [id_sala], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sessoes_ibfk_1")
+
+  @@index([id_sala], map: "id_sala")
+}
+
+model vendas {
+  id            Int      @id @default(autoincrement())
+  descricao     String   @db.VarChar(50)
+  preco         Decimal  @db.Decimal(5, 2)
+  horario_venda DateTime @db.Timestamp(0)
+}
