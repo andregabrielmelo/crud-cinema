@@ -3,8 +3,8 @@ import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-    const assentos = await prisma.assentos.findMany()
-    return new NextResponse(JSON.stringify(assentos), {
+    const vendas = await prisma.vendas.findMany()
+    return new NextResponse(JSON.stringify(vendas), {
         status: 200,
     });
 }
@@ -17,40 +17,38 @@ export async function DELETE(request: NextRequest) {
         })
     }
     try {
-
-        await prisma.assentos.delete({
+        await prisma.ingressos.delete({
             where: {
                 id: parseInt(itemID)
             }
         })
     } catch (e) {
-        return new NextResponse("erro ao excluir o assento", {
+        return new NextResponse("erro ao excluir a sala", {
             status: 400
         })
     }
-    return new NextResponse("assento excluido", {
+    return new NextResponse("sala excluida", {
         status: 200
     })
 }
 
 export async function POST(request: NextRequest) {
     try {
-        const bodyData: Prisma.$assentosPayload["scalars"] = await request.json();
-        const salaExists = await prisma.salas.count({where : {
-            id : bodyData.id_sala
-        }}) 
-        if(!salaExists){
-            throw "Sala não existente"
+        const bodyData: Prisma.$ingressosPayload["scalars"] = await request.json();
+        const sessionExists = await prisma.sessoes.count({where : {id : bodyData.id_sessao}})
+        const seatExists = await prisma.assentos.count({where : {id : bodyData.id_assento}})
+        if(!sessionExists || !seatExists){
+            throw "Sessoes ou assento inexistente"
         }
-        const newSeat = await prisma.assentos.create({
+        const newTicket = await prisma.ingressos.create({
             data: bodyData
         })
 
-        return new NextResponse(newSeat.id.toString(), {
+        return new NextResponse(newTicket.id.toString(), {
             status: 200
         })
     } catch {
-        return new NextResponse("erro ao incluir o assento", {
+        return new NextResponse("erro ao incluir o registro", {
             status: 400
         })
     }
@@ -59,25 +57,25 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
     try {
-        const bodyData = await request.json()
+        const bodyData: Prisma.$ingressosPayload["scalars"] = await request.json()
         const itemID = request.headers.get("id")
         if (!itemID) {
             return new NextResponse("id é obrigatório", {
                 status: 400
             })
         }
-        await prisma.assentos.update({
+        await prisma.ingressos.update({
             data: bodyData,
             where:
             {
                 id: parseInt(itemID)
             }
         })
-        return new NextResponse("assento editado com sucesso", {
+        return new NextResponse("sala editada com sucesso", {
             status: 200
         })
     } catch {
-        return new NextResponse("erro ao atualizar o assento", {
+        return new NextResponse("erro ao atualizar a sala", {
             status: 400
         })
     }

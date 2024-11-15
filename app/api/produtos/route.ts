@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-    const assentos = await prisma.assentos.findMany()
+    const assentos = await prisma.produtos.findMany()
     return new NextResponse(JSON.stringify(assentos), {
         status: 200,
     });
@@ -18,7 +18,7 @@ export async function DELETE(request: NextRequest) {
     }
     try {
 
-        await prisma.assentos.delete({
+        await prisma.produtos.delete({
             where: {
                 id: parseInt(itemID)
             }
@@ -35,14 +35,8 @@ export async function DELETE(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     try {
-        const bodyData: Prisma.$assentosPayload["scalars"] = await request.json();
-        const salaExists = await prisma.salas.count({where : {
-            id : bodyData.id_sala
-        }}) 
-        if(!salaExists){
-            throw "Sala não existente"
-        }
-        const newSeat = await prisma.assentos.create({
+        const bodyData: Prisma.$produtosPayload["scalars"] = await request.json();
+        const newSeat = await prisma.produtos.create({
             data: bodyData
         })
 
@@ -59,14 +53,14 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
     try {
-        const bodyData = await request.json()
+        const bodyData : Prisma.$produtosPayload["scalars"] = await request.json()
         const itemID = request.headers.get("id")
         if (!itemID) {
             return new NextResponse("id é obrigatório", {
                 status: 400
             })
         }
-        await prisma.assentos.update({
+        await prisma.produtos.update({
             data: bodyData,
             where:
             {

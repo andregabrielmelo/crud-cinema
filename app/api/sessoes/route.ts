@@ -3,8 +3,8 @@ import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-    const assentos = await prisma.assentos.findMany()
-    return new NextResponse(JSON.stringify(assentos), {
+    const sessoes = await prisma.sessoes.findMany()
+    return new NextResponse(JSON.stringify(sessoes), {
         status: 200,
     });
 }
@@ -18,39 +18,39 @@ export async function DELETE(request: NextRequest) {
     }
     try {
 
-        await prisma.assentos.delete({
+        await prisma.sessoes.delete({
             where: {
                 id: parseInt(itemID)
             }
         })
     } catch (e) {
-        return new NextResponse("erro ao excluir o assento", {
+        return new NextResponse("erro ao excluir o registro", {
             status: 400
         })
     }
-    return new NextResponse("assento excluido", {
+    return new NextResponse("registro excluido", {
         status: 200
     })
 }
 
 export async function POST(request: NextRequest) {
     try {
-        const bodyData: Prisma.$assentosPayload["scalars"] = await request.json();
+        const bodyData: Prisma.$sessoesPayload["scalars"] = await request.json();
         const salaExists = await prisma.salas.count({where : {
             id : bodyData.id_sala
         }}) 
         if(!salaExists){
             throw "Sala não existente"
         }
-        const newSeat = await prisma.assentos.create({
+        const newSession = await prisma.sessoes.create({
             data: bodyData
         })
 
-        return new NextResponse(newSeat.id.toString(), {
+        return new NextResponse(newSession.id.toString(), {
             status: 200
         })
-    } catch {
-        return new NextResponse("erro ao incluir o assento", {
+    } catch (e) {
+        return new NextResponse("erro ao incluir o registro", {
             status: 400
         })
     }
@@ -59,25 +59,25 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
     try {
-        const bodyData = await request.json()
+        const bodyData : Prisma.$sessoesPayload["scalars"] = await request.json()
         const itemID = request.headers.get("id")
         if (!itemID) {
             return new NextResponse("id é obrigatório", {
                 status: 400
             })
         }
-        await prisma.assentos.update({
+        await prisma.sessoes.update({
             data: bodyData,
             where:
             {
                 id: parseInt(itemID)
             }
         })
-        return new NextResponse("assento editado com sucesso", {
+        return new NextResponse("registro editado com sucesso", {
             status: 200
         })
     } catch {
-        return new NextResponse("erro ao atualizar o assento", {
+        return new NextResponse("erro ao atualizar o registro", {
             status: 400
         })
     }
