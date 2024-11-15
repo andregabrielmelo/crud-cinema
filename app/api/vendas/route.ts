@@ -9,11 +9,21 @@ type productsList = Array<
 >
 
 export async function GET(request: NextRequest) {
-    const assentos = await prisma.vendas.findMany()
-    return new NextResponse(JSON.stringify(assentos), {
+    const cursor = request.headers.get("cursor")
+    if (!cursor){
+        return new NextResponse("cursor é obrigatório", {
+            status: 400
+        })
+    }
+    const vendas = await prisma.vendas.findMany({
+        skip : parseInt(cursor) * 20,
+        take : 20
+    })
+    return new NextResponse(JSON.stringify(vendas), {
         status: 200,
     });
 }
+
 
 export async function DELETE(request: NextRequest) {
     const itemID = request.headers.get("id")
