@@ -3,7 +3,16 @@ import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-    const sessoes = await prisma.sessoes.findMany()
+    const cursor = request.headers.get("cursor")
+    if (!cursor){
+        return new NextResponse("cursor é obrigatório", {
+            status: 400
+        })
+    }
+    const sessoes = await prisma.sessoes.findMany({
+        skip : parseInt(cursor) * 20,
+        take : 20
+    })
     return new NextResponse(JSON.stringify(sessoes), {
         status: 200,
     });

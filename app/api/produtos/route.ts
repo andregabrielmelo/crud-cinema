@@ -3,8 +3,17 @@ import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-    const assentos = await prisma.produtos.findMany()
-    return new NextResponse(JSON.stringify(assentos), {
+    const cursor = request.headers.get("cursor")
+    if (!cursor){
+        return new NextResponse("cursor é obrigatório", {
+            status: 400
+        })
+    }
+    const produtos = await prisma.produtos.findMany({
+        skip : parseInt(cursor) * 20,
+        take : 20
+    })
+    return new NextResponse(JSON.stringify(produtos), {
         status: 200,
     });
 }
