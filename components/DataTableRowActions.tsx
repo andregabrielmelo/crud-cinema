@@ -1,4 +1,5 @@
-import { Row } from "react-table";
+"use client";
+
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,19 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface DataTableRowActionProps<TData extends object> {
-  row: Row<TData>;
-  onView: (value: TData) => void;
-  onEdit: (value: TData) => void;
-  onDelete: (value: TData) => void;
-}
-
-const DataTableRowActions = <TData extends object>({
-  row,
-  onView,
-  onEdit,
-  onDelete,
-}: DataTableRowActionProps<TData>) => {
+const DataTableRowActions = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -33,16 +22,10 @@ const DataTableRowActions = <TData extends object>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={() => onView(row.original)}>
-          View
-        </DropdownMenuItem>
+        <DropdownMenuItem>View</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => onEdit(row.original)}>
-          Edit
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onDelete(row.original)}>
-          Delete
-        </DropdownMenuItem>
+        <DropdownMenuItem>Edit</DropdownMenuItem>
+        <DropdownMenuItem>Delete</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

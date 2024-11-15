@@ -16,8 +16,8 @@ const Navbar = () => {
           <Link href="/vendas">
             <span>Vendas</span>
           </Link>
-          <Link href="/relatorios">
-            <span>Relatórios</span>
+          <Link href="/gerenciamento">
+            <span>Gerenciamento</span>
           </Link>
         </div>
       </nav>

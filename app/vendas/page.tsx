@@ -1,9 +1,10 @@
-import { columns } from "@/app/vendas/columns";
 import { DataTable } from "@/components/DataTable";
 import { getData } from "@/lib/db";
+import getColumns from "@/lib/columns";
 
 export default async function Home() {
-  const data = await getData();
+  const data = await getData("vendas");
+  const columns = getColumns("vendas");
 
   return (
     <>
