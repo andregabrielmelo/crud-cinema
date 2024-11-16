@@ -4,14 +4,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
     const cursor = request.headers.get("cursor")
-    if (!cursor){
+    if (!cursor) {
         return new NextResponse("cursor é obrigatório", {
             status: 400
         })
     }
     const assentos = await prisma.assentos.findMany({
-        skip : parseInt(cursor) * 20,
-        take : 20
+        skip: parseInt(cursor) * 20,
+        take: 20
     })
     return new NextResponse(JSON.stringify(assentos), {
         status: 200,
@@ -46,10 +46,12 @@ export async function DELETE(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const bodyData: Prisma.$assentosPayload["scalars"] = await request.json();
-        const salaExists = await prisma.salas.count({where : {
-            id : bodyData.id_sala
-        }}) 
-        if(!salaExists){
+        const salaExists = await prisma.salas.count({
+            where: {
+                id: bodyData.id_sala
+            }
+        })
+        if (!salaExists) {
             throw "Sala não existente"
         }
         const newSeat = await prisma.assentos.create({
@@ -59,8 +61,8 @@ export async function POST(request: NextRequest) {
         return new NextResponse(newSeat.id.toString(), {
             status: 200
         })
-    } catch {
-        return new NextResponse("erro ao incluir o assento", {
+    } catch (e) {
+        return new NextResponse(JSON.stringify(e), {
             status: 400
         })
     }
