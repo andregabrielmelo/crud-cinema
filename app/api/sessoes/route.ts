@@ -15,7 +15,9 @@ export async function GET(request: NextRequest) {
         take: 20,
         ...(movie ? {
             where: {
-                nome_do_filme: movie
+                nome_do_filme: {
+                    contains: movie
+                }
             }
         } : {})
     })
@@ -29,6 +31,13 @@ export async function POST(request: NextRequest) {
         const bodyData: Prisma.$sessoesPayload["scalars"] = await request.json();
         bodyData.horario_inicial = new Date(bodyData.horario_inicial)
         bodyData.horario_final = new Date(bodyData.horario_final)
+        if (bodyData.horario_inicial >= bodyData.horario_final) {
+            throw "O final da sessão deve ser após o inicio"
+        }
+        if (bodyData.horario_inicial < new Date()) {
+            throw "A sessão deve ser iniciada no futuro"
+        }
+
         const salaExists = await prisma.salas.count({
             where: {
                 id: bodyData.id_sala
@@ -37,6 +46,12 @@ export async function POST(request: NextRequest) {
         if (!salaExists) {
             throw "Sala não existente"
         }
+
+        if (await checkRoomavailability(bodyData.id_sala, bodyData.horario_inicial, bodyData.horario_final)) {
+            throw "Este horario já está sendo utilizado nesta sala"
+        }
+
+
         const newSession = await prisma.sessoes.create({
             data: bodyData
         })
@@ -53,27 +68,27 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-    const itemID = request.headers.get("id")
-    if (!itemID) {
-        return new NextResponse("id é obrigatório", {
-            status: 400
-        })
-    }
     try {
-
+        const itemID = request.headers.get("id")
+        if (!itemID) {
+            return new NextResponse("id é obrigatório", {
+                status: 400
+            })
+        }
         await prisma.sessoes.delete({
             where: {
                 id: parseInt(itemID)
             }
         })
+        return new NextResponse("registro excluido", {
+            status: 200
+        })
     } catch (e) {
-        return new NextResponse("erro ao excluir o registro", {
+        return new NextResponse(JSON.stringify(e), {
             status: 400
         })
     }
-    return new NextResponse("registro excluido", {
-        status: 200
-    })
+
 }
 
 export async function PUT(request: NextRequest) {
@@ -85,6 +100,9 @@ export async function PUT(request: NextRequest) {
                 status: 400
             })
         }
+        if (await checkRoomavailability(bodyData.id_sala, bodyData.horario_inicial, bodyData.horario_final)) {
+            throw "Este horario já está sendo utilizado nesta sala"
+        }
         await prisma.sessoes.update({
             data: bodyData,
             where:
@@ -95,9 +113,48 @@ export async function PUT(request: NextRequest) {
         return new NextResponse("registro editado com sucesso", {
             status: 200
         })
-    } catch {
-        return new NextResponse("erro ao atualizar o registro", {
+    } catch (e) {
+        return new NextResponse(JSON.stringify(e), {
             status: 400
         })
     }
+}
+
+async function checkRoomavailability(salaID: number, horario_inicial: Date, horario_final: Date) {
+    return await prisma.sessoes.count({
+        where: {
+            id_sala: salaID,
+            OR: [
+                {
+                    horario_inicial: {
+                        lte: horario_inicial
+                    },
+                    horario_final: {
+                        gte: horario_inicial
+                    }
+                },
+                {
+                    horario_inicial: {
+                        lte: horario_final
+                    },
+                    horario_final: {
+                        gte: horario_final
+                    }
+                }, {
+                    AND: [
+                        {
+                            horario_inicial: {
+                                gte: horario_inicial
+                            }
+                        },
+                        {
+                            horario_inicial: {
+                                lte: horario_final
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    })
 }

@@ -10,5 +10,5 @@ SELECT * FROM cinema.vendas;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
-TRUNCATE TABLE cinema.assentos;
+TRUNCATE TABLE cinema.sessoes;
 SET FOREIGN_KEY_CHECKS = 1;
