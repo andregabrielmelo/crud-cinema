@@ -4,14 +4,20 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
     const cursor = request.headers.get("cursor")
-    if (!cursor){
+    const movie = request.headers.get("movie")
+    if (!cursor) {
         return new NextResponse("cursor é obrigatório", {
             status: 400
         })
     }
     const sessoes = await prisma.sessoes.findMany({
-        skip : parseInt(cursor) * 20,
-        take : 20
+        skip: parseInt(cursor) * 20,
+        take: 20,
+        ...(movie ? {
+            where: {
+                nome_do_filme: movie
+            }
+        } : {})
     })
     return new NextResponse(JSON.stringify(sessoes), {
         status: 200,
@@ -23,10 +29,12 @@ export async function POST(request: NextRequest) {
         const bodyData: Prisma.$sessoesPayload["scalars"] = await request.json();
         bodyData.horario_inicial = new Date(bodyData.horario_inicial)
         bodyData.horario_final = new Date(bodyData.horario_final)
-        const salaExists = await prisma.salas.count({where : {
-            id : bodyData.id_sala
-        }}) 
-        if(!salaExists){
+        const salaExists = await prisma.salas.count({
+            where: {
+                id: bodyData.id_sala
+            }
+        })
+        if (!salaExists) {
             throw "Sala não existente"
         }
         const newSession = await prisma.sessoes.create({
@@ -70,7 +78,7 @@ export async function DELETE(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
     try {
-        const bodyData : Prisma.$sessoesPayload["scalars"] = await request.json()
+        const bodyData: Prisma.$sessoesPayload["scalars"] = await request.json()
         const itemID = request.headers.get("id")
         if (!itemID) {
             return new NextResponse("id é obrigatório", {
