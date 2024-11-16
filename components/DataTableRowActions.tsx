@@ -11,7 +11,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const DataTableRowActions = () => {
+import type { GenericData } from "@/lib/definitions";
+
+//  Do selected action when clicking on a row
+const handleRowClick = (row: GenericData) => {
+  console.log("Clicked on row with ID:", row.id);
+  alert("Clicked on row with ID: " + row.id);
+};
+
+const DataTableRowActions = ({ row }: { row: GenericData }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -22,10 +30,16 @@ const DataTableRowActions = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem>View</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleRowClick(row)}>
+          View
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Delete</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleRowClick(row)}>
+          Edit
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleRowClick(row)}>
+          Delete
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

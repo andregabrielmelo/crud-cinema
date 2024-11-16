@@ -2,7 +2,7 @@ export type Sala = {
   id: string;
   bloco: string;
   numero: number;
-  total_assentos: number;
+  total_de_assentos: number;
 };
 
 export type Assento = {

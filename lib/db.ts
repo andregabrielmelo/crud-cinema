@@ -1,4 +1,5 @@
 import { GenericData } from "./definitions";
+import axios from "axios";
 
 export async function getData(
   type: string,
@@ -56,19 +57,19 @@ export async function getData(
         id: "1",
         bloco: "A",
         numero: 1,
-        total_assentos: 100,
+        total_de_assentos: 100,
       },
       {
         id: "2",
         bloco: "A",
         numero: 2,
-        total_assentos: 100,
+        total_de_assentos: 100,
       },
       {
         id: "3",
         bloco: "B",
         numero: 1,
-        total_assentos: 200,
+        total_de_assentos: 200,
       },
     ];
   } else if (type === "produtos") {
@@ -143,8 +144,7 @@ export async function getData(
   return id ? data.filter((d) => d.id === id) : data;
 }
 
-// export async function getVendas() {
-//   const connection = await createConnection();
-//   const [rows] = await connection.query("SELECT * FROM vendas");
-//   return rows;
-// }
+export async function get(url: string) {
+  const response = await axios.get(url);
+  return response.data;
+}

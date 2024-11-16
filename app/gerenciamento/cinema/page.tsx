@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { DataTable } from "@/components/DataTable";
-import { getData } from "@/lib/db";
 import getColumns from "@/lib/columns";
+import axios from "axios";
 
 import {
   Breadcrumb,
@@ -34,12 +34,14 @@ export default function Home() {
 
   // Fetch data and update columns whenever the selected value changes
   React.useEffect(() => {
-    async function fetchData() {
-      const fetchedData = await getData(selectedValue);
-      setData(fetchedData);
-      setColumns(getColumns(selectedValue));
-    }
-    fetchData();
+    axios
+      .get("http://localhost:3000/api/" + selectedValue, {
+        headers: { cursor: 0 },
+      })
+      .then((response) => {
+        setData(response.data);
+        setColumns(getColumns(selectedValue));
+      });
   }, [selectedValue]);
 
   return (

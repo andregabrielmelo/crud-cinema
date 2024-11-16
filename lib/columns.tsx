@@ -9,7 +9,7 @@ function getColumns(type: string): ColumnDef<GenericData>[] {
         { accessorKey: "id", header: "ID" },
         { accessorKey: "bloco", header: "Bloco" },
         { accessorKey: "numero", header: "Número" },
-        { accessorKey: "total_assentos", header: "Total Assentos" },
+        { accessorKey: "total_de_assentos", header: "Total de Assentos" },
         { id: "actions", header: "Ações", cell: DataTableRowActions },
       ];
     case "assentos":
