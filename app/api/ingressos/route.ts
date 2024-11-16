@@ -18,6 +18,30 @@ export async function GET(request: NextRequest) {
     });
 }
 
+export async function POST(request: NextRequest) {
+    try {
+        const bodyData: Prisma.$ingressosPayload["scalars"] = await request.json();
+        const sessionExists = await prisma.sessoes.count({where : {id : bodyData.id_sessao}})
+        const seatExists = await prisma.assentos.count({where : {id : bodyData.id_assento}})
+        if(!sessionExists || !seatExists){
+            throw "Sessoes ou assento inexistente"
+        }
+        bodyData.horario_venda = new Date()
+        const newTicket = await prisma.ingressos.create({
+            data: bodyData
+        })
+
+        return new NextResponse(newTicket.id.toString(), {
+            status: 200
+        })
+    } catch (e) {
+        console.log("DEU ERRo")
+        return new NextResponse(JSON.stringify(e), {
+            status: 400
+        })
+    }
+
+}
 
 export async function DELETE(request: NextRequest) {
     const itemID = request.headers.get("id")
@@ -42,28 +66,6 @@ export async function DELETE(request: NextRequest) {
     })
 }
 
-export async function POST(request: NextRequest) {
-    try {
-        const bodyData: Prisma.$ingressosPayload["scalars"] = await request.json();
-        const sessionExists = await prisma.sessoes.count({where : {id : bodyData.id_sessao}})
-        const seatExists = await prisma.assentos.count({where : {id : bodyData.id_assento}})
-        if(!sessionExists || !seatExists){
-            throw "Sessoes ou assento inexistente"
-        }
-        const newTicket = await prisma.ingressos.create({
-            data: bodyData
-        })
-
-        return new NextResponse(newTicket.id.toString(), {
-            status: 200
-        })
-    } catch {
-        return new NextResponse("erro ao incluir o registro", {
-            status: 400
-        })
-    }
-
-}
 
 export async function PUT(request: NextRequest) {
     try {

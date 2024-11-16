@@ -18,6 +18,32 @@ export async function GET(request: NextRequest) {
     });
 }
 
+export async function POST(request: NextRequest) {
+    try {
+        const bodyData: Prisma.$sessoesPayload["scalars"] = await request.json();
+        bodyData.horario_inicial = new Date(bodyData.horario_inicial)
+        bodyData.horario_final = new Date(bodyData.horario_final)
+        const salaExists = await prisma.salas.count({where : {
+            id : bodyData.id_sala
+        }}) 
+        if(!salaExists){
+            throw "Sala não existente"
+        }
+        const newSession = await prisma.sessoes.create({
+            data: bodyData
+        })
+
+        return new NextResponse(newSession.id.toString(), {
+            status: 200
+        })
+    } catch (e) {
+        return new NextResponse(JSON.stringify(e), {
+            status: 400
+        })
+    }
+
+}
+
 export async function DELETE(request: NextRequest) {
     const itemID = request.headers.get("id")
     if (!itemID) {
@@ -40,30 +66,6 @@ export async function DELETE(request: NextRequest) {
     return new NextResponse("registro excluido", {
         status: 200
     })
-}
-
-export async function POST(request: NextRequest) {
-    try {
-        const bodyData: Prisma.$sessoesPayload["scalars"] = await request.json();
-        const salaExists = await prisma.salas.count({where : {
-            id : bodyData.id_sala
-        }}) 
-        if(!salaExists){
-            throw "Sala não existente"
-        }
-        const newSession = await prisma.sessoes.create({
-            data: bodyData
-        })
-
-        return new NextResponse(newSession.id.toString(), {
-            status: 200
-        })
-    } catch (e) {
-        return new NextResponse("erro ao incluir o registro", {
-            status: 400
-        })
-    }
-
 }
 
 export async function PUT(request: NextRequest) {
