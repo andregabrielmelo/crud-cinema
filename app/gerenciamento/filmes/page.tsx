@@ -47,7 +47,7 @@ export default function Home() {
   return (
     <>
       <section className="container mx-auto py-2">
-        <h1 className="heading">Filmes</h1>
+        <h1 className="title pb-2">Filmes</h1>
 
         <div className="flex pb-7">
           <Breadcrumb>
