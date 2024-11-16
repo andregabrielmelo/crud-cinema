@@ -80,39 +80,46 @@ export async function POST(request: NextRequest) {
 
 }
 
+export async function DeleteTicket(itemID: number) {
+    const ticketData = await prisma.ingressos.findFirst({
+        where: { id: itemID }, include: {
+            assentos: {
+                include: {
+                    salas: true
+                }
+            },
+            sessoes: true
+        }
+    });
+    if (!ticketData) {
+        throw "Ingresso não existe"
+    }
+
+    await prisma.vendas.create({
+        data: {
+            horario_venda: new Date(),
+            preco: (ticketData.preco?.toNumber() ?? 0) * -1,
+            descricao: `Venda de ingresso - ${ticketData.sessoes.nome_do_filme} - Assento ${ticketData.assentos.codigo}, Bloco ${ticketData.assentos.salas.bloco} Sala ${ticketData.assentos.salas.bloco}, Sessão ${ticketData.sessoes.id}`
+        }
+    })
+
+    await prisma.ingressos.delete({
+        where: {
+            id: itemID
+        }
+    })
+
+}
+
 export async function DELETE(request: NextRequest) {
     try {
         const itemID = request.headers.get("id")
         if (!itemID) {
             throw "id é obrigatório"
         }
-        const ticketData = await prisma.ingressos.findFirst({
-            where: { id: parseInt(itemID) }, include: {
-                assentos: {
-                    include: {
-                        salas: true
-                    }
-                },
-                sessoes: true
-            }
-        });
-        if (!ticketData) {
-            throw "Ingresso não existe"
-        }
+        DeleteTicket(parseInt(itemID))
 
-        await prisma.vendas.create({
-            data: {
-                horario_venda: new Date(),
-                preco: (ticketData.preco?.toNumber() ?? 0) * -1,
-                descricao: `Venda de ingresso - ${ticketData.sessoes.nome_do_filme} - Assento ${ticketData.assentos.codigo}, Bloco ${ticketData.assentos.salas.bloco} Sala ${ticketData.assentos.salas.bloco}, Sessão ${ticketData.sessoes.id}`
-            }
-        })
 
-        await prisma.ingressos.delete({
-            where: {
-                id: parseInt(itemID)
-            }
-        })
     } catch (e) {
         return new NextResponse(JSON.stringify(e), {
             status: 400
