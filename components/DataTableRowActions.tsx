@@ -12,14 +12,35 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import type { GenericData } from "@/lib/definitions";
+import axios from "axios";
 
-//  Do selected action when clicking on a row
-const handleRowClick = (row: GenericData) => {
-  console.log("Clicked on row with ID:", row.id);
-  alert("Clicked on row with ID: " + row.id);
+interface DataTableRowActionsProps<GenericData> {
+  row: GenericData;
+  tableName: string;
+}
+
+const onEdit = (row: GenericData) => {
+  // Edit current row
+  console.log("Editing row with ID:", row.id);
 };
 
-const DataTableRowActions = ({ row }: { row: GenericData }) => {
+const onDelete = (row: GenericData, tableName: string) => {
+  // Delete current row
+  axios
+    .delete("http://localhost:3000/api/" + tableName, {
+      headers: {
+        id: row.id,
+      },
+    })
+    .then((response) => {
+      console.log(response);
+    });
+};
+
+const DataTableRowActions = ({
+  row,
+  tableName,
+}: DataTableRowActionsProps<GenericData>) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -30,14 +51,9 @@ const DataTableRowActions = ({ row }: { row: GenericData }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={() => handleRowClick(row)}>
-          View
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => handleRowClick(row)}>
-          Edit
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleRowClick(row)}>
+        <DropdownMenuItem onClick={() => onEdit(row)}>Edit</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onDelete(row, tableName)}>
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>

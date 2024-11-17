@@ -11,6 +11,10 @@
     @apply font-black text-sky-400 text-5xl;
   }
 
+  .subtitle {
+    @apply text-xl font-semibold text-sky-400;
+  }
+
   .nav-link {
     @apply text-lg font-semibold hover:underline;
   }
@@ -83,4 +87,12 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.assento {
+  display: flex;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  justify-content: center;
 }

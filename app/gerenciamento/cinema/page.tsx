@@ -2,6 +2,9 @@
 
 import React, { useState } from "react";
 import { DataTable } from "@/components/DataTable";
+import AddAssento from "@/forms/addAssento";
+import AddSala from "@/forms/addSala";
+import AddProduto from "@/forms/addProduto";
 import getColumns from "@/lib/columns";
 import axios from "axios";
 
@@ -26,10 +29,14 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { GenericData } from "@/lib/definitions";
 
 export default function Home() {
-  const [selectedValue, setSelectedValue] = useState<string>("assentos");
+  const placeholder = "Assentos";
+
+  const [selectedValue, setSelectedValue] = useState<string>(
+    placeholder.toLowerCase()
+  );
   const [data, setData] = useState<GenericData[]>([]);
   const [columns, setColumns] = useState<ColumnDef<GenericData>[]>(
-    getColumns("assentos")
+    getColumns(placeholder.toLowerCase())
   );
 
   // Fetch data and update columns whenever the selected value changes
@@ -72,7 +79,7 @@ export default function Home() {
         <div className="flex pb-0">
           <Select onValueChange={(value) => setSelectedValue(value)}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Selecione" />
+              <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="assentos">Assentos</SelectItem>
@@ -84,6 +91,12 @@ export default function Home() {
 
         <div className="container mx-auto py-2">
           <DataTable columns={columns} data={data} />
+        </div>
+
+        <div className="container mx-auto py-2">
+          {selectedValue === "assentos" && <AddAssento />}
+          {selectedValue === "salas" && <AddSala />}
+          {selectedValue === "produtos" && <AddProduto />}
         </div>
       </section>
     </>

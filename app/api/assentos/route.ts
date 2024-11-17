@@ -20,8 +20,9 @@ export async function GET(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   const itemID = request.headers.get("id");
+  console.log("ItemID: ", itemID);
   if (!itemID) {
-    return new NextResponse("id é obrigatório", {
+    return new NextResponse("id é obrigatório " + itemID, {
       status: 400,
     });
   }
@@ -42,8 +43,10 @@ export async function DELETE(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  console.log("Request: Hello ", request);
   try {
     const bodyData: Prisma.$assentosPayload["scalars"] = await request.json();
+    console.log("BodyData: ", bodyData);
     const salaExists = await prisma.salas.count({
       where: {
         id: bodyData.id_sala,

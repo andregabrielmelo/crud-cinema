@@ -45,7 +45,6 @@ export async function DELETE(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const bodyData: Prisma.$salasPayload["scalars"] = await request.json();
-    bodyData.total_de_assentos = 0;
     const newRoom = await prisma.salas.create({
       data: bodyData,
     });

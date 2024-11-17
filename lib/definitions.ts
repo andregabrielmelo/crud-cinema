@@ -21,7 +21,7 @@ export type Produto = {
 export type Sessao = {
   id: string;
   id_sala: string;
-  filme: string;
+  nome_do_filme: string;
   horario_inicial: string;
   horario_final: string;
 };
