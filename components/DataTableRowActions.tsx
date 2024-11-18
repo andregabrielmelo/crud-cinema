@@ -10,8 +10,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { TableProps, TableRowProps } from "react-table";
+import { TableName } from "@/lib/definitions";
+import axios from "axios";
 
-const DataTableRowActions = () => {
+const DataTableRowActions = (props: any, tableName: TableName) => {
+  const deleteItem = () => {
+    axios.delete(`/api/${tableName}`, {
+      headers: {
+        id: props.row.original.id,
+      },
+    });
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -21,11 +31,8 @@ const DataTableRowActions = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem>View</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Delete</DropdownMenuItem>
+        <DropdownMenuItem>Editar</DropdownMenuItem>
+        <DropdownMenuItem onClick={deleteItem}>Deletar</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
