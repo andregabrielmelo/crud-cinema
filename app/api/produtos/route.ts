@@ -45,6 +45,13 @@ export async function DELETE(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const bodyData: Prisma.$produtosPayload["scalars"] = await request.json();
+        if(await prisma.produtos.count({
+            where : {
+                nome : bodyData.nome
+            }
+        })){
+            throw "Este produto ja está listado"
+        }
         const newSeat = await prisma.produtos.create({
             data: bodyData
         })
