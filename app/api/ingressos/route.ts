@@ -4,14 +4,21 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
     const cursor = request.headers.get("cursor")
-    if (!cursor){
+    const sessionID = request.headers.get("sessao")
+    if (!cursor) {
         return new NextResponse("cursor é obrigatório", {
             status: 400
         })
     }
     const ingressos = await prisma.ingressos.findMany({
-        skip : parseInt(cursor) * 20,
-        take : 20
+        skip: parseInt(cursor) * 20,
+        take: 20,
+
+        ...(sessionID ? {
+            where: {
+                id_sessao: parseInt(sessionID)
+            }
+        } : {})
     })
     return new NextResponse(JSON.stringify(ingressos), {
         status: 200,
@@ -21,21 +28,51 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const bodyData: Prisma.$ingressosPayload["scalars"] = await request.json();
-        const sessionExists = await prisma.sessoes.count({where : {id : bodyData.id_sessao}})
-        const seatExists = await prisma.assentos.count({where : {id : bodyData.id_assento}})
-        if(!sessionExists || !seatExists){
+        const sessionRegister = await prisma.sessoes.findFirst({
+            where: { id: bodyData.id_sessao }, include: {
+                salas: true
+            }
+        })
+        const seatRegister = await prisma.assentos.findFirst({
+            where: { id: bodyData.id_assento }, include: {
+                salas: true
+            }
+        })
+        if (!sessionRegister || !seatRegister) {
             throw "Sessoes ou assento inexistente"
         }
-        bodyData.horario_venda = new Date()
+        if (sessionRegister.salas.id != seatRegister.salas.id) {
+            throw "Esse assento não pode ser reservado nesta sessão"
+        }
+        if (await prisma.ingressos.count({
+            where: {
+                id_sessao: bodyData.id_sessao,
+                id_assento: bodyData.id_assento
+            }
+        })) {
+            throw "Esse ingresso ja foi vendido"
+
+        }
+
+        bodyData.horario_venda = new Date();
+        bodyData.preco = new Prisma.Decimal(seatRegister.vip ? 70 : 40);
+
         const newTicket = await prisma.ingressos.create({
             data: bodyData
+        })
+
+        await prisma.vendas.create({
+            data: {
+                horario_venda: bodyData.horario_venda,
+                preco: bodyData.preco,
+                descricao: `Venda de ingresso - ${sessionRegister.nome_do_filme} - Assento ${seatRegister.codigo}, Bloco ${seatRegister.salas.bloco} Sala ${seatRegister.salas.numero}, Sessão ${sessionRegister.id}`
+            }
         })
 
         return new NextResponse(newTicket.id.toString(), {
             status: 200
         })
     } catch (e) {
-        console.log("DEU ERRo")
         return new NextResponse(JSON.stringify(e), {
             status: 400
         })
@@ -43,52 +80,52 @@ export async function POST(request: NextRequest) {
 
 }
 
-export async function DELETE(request: NextRequest) {
-    const itemID = request.headers.get("id")
-    if (!itemID) {
-        return new NextResponse("id é obrigatório", {
-            status: 400
-        })
+export async function DeleteTicket(itemID: number) {
+    const ticketData = await prisma.ingressos.findFirst({
+        where: { id: itemID }, include: {
+            assentos: {
+                include: {
+                    salas: true
+                }
+            },
+            sessoes: true
+        }
+    });
+    if (!ticketData) {
+        throw "Ingresso não existe"
     }
-    try {
-        await prisma.ingressos.delete({
-            where: {
-                id: parseInt(itemID)
-            }
-        })
-    } catch (e) {
-        return new NextResponse("erro ao excluir a sala", {
-            status: 400
-        })
-    }
-    return new NextResponse("sala excluida", {
-        status: 200
+
+    await prisma.vendas.create({
+        data: {
+            horario_venda: new Date(),
+            preco: (ticketData.preco?.toNumber() ?? 0) * -1,
+            descricao: `Reembolso de ingresso - ${ticketData.sessoes.nome_do_filme} - Assento ${ticketData.assentos.codigo}, Bloco ${ticketData.assentos.salas.bloco} Sala ${ticketData.assentos.salas.bloco}, Sessão ${ticketData.sessoes.id}`
+        }
     })
+
+    await prisma.ingressos.delete({
+        where: {
+            id: itemID
+        }
+    })
+
 }
 
-
-export async function PUT(request: NextRequest) {
+export async function DELETE(request: NextRequest) {
     try {
-        const bodyData: Prisma.$ingressosPayload["scalars"] = await request.json()
         const itemID = request.headers.get("id")
         if (!itemID) {
-            return new NextResponse("id é obrigatório", {
-                status: 400
-            })
+            throw "id é obrigatório"
         }
-        await prisma.ingressos.update({
-            data: bodyData,
-            where:
-            {
-                id: parseInt(itemID)
-            }
-        })
-        return new NextResponse("sala editada com sucesso", {
-            status: 200
-        })
-    } catch {
-        return new NextResponse("erro ao atualizar a sala", {
+        DeleteTicket(parseInt(itemID))
+
+
+    } catch (e) {
+        return new NextResponse(JSON.stringify(e), {
             status: 400
         })
     }
+    return new NextResponse("Ingresso excluido", {
+        status: 200
+    })
 }
