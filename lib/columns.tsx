@@ -46,7 +46,11 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
         { accessorKey: "filme", header: "Filme" },
         { accessorKey: "horario_inicial", header: "Horário Inicial" },
         { accessorKey: "horario_final", header: "Horário Final" },
-        { id: "actions", header: "Ações", cell: (props) => DataTableRowActions(props, type) },
+        {
+          id: "actions",
+          header: "Ações",
+          cell: (props) => DataTableRowActions(props, type),
+        },
       ];
     case "ingressos":
       return [
@@ -55,7 +59,11 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
         { accessorKey: "id_assento", header: "Assento ID" },
         { accessorKey: "preco", header: "Preço" },
         { accessorKey: "horario_venda", header: "Horário Venda" },
-        { id: "actions", header: "Ações", cell: (props) => DataTableRowActions(props, type) },
+        {
+          id: "actions",
+          header: "Ações",
+          cell: (props) => DataTableRowActions(props, type),
+        },
       ];
     case "vendas":
       return [
@@ -63,7 +71,11 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
         { accessorKey: "description", header: "Descrição" },
         { accessorKey: "amount", header: "Valor" },
         { accessorKey: "datetime", header: "Data e Hora" },
-        { id: "actions", header: "Ações", cell: (props) => DataTableRowActions(props, type) },
+        {
+          id: "actions",
+          header: "Ações",
+          cell: (props) => DataTableRowActions(props, type),
+        },
       ];
     default:
       return [];

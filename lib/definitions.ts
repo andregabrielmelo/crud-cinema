@@ -41,5 +41,11 @@ export type Venda = {
   datetime: string;
 };
 
-export type TableName = "vendas" | "assentos" | "salas" | "produtos" | "ingressos" | "sessoes"
+export type TableName =
+  | "vendas"
+  | "assentos"
+  | "salas"
+  | "produtos"
+  | "ingressos"
+  | "sessoes";
 export type GenericData = Venda | Assento | Sala | Produto | Ingresso | Sessao;

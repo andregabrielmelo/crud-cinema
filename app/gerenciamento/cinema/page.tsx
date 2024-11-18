@@ -26,14 +26,10 @@ import {
 } from "@/components/ui/select";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import type { GenericData } from "@/lib/definitions";
+import type { GenericData, TableName } from "@/lib/definitions";
 
 export default function Home() {
-  const placeholder = "Assentos";
-
-  const [selectedValue, setSelectedValue] = useState<string>(
-    placeholder.toLowerCase()
-  );
+  const [selectedValue, setSelectedValue] = useState<TableName>("assentos");
   const [data, setData] = useState<GenericData[]>([]);
   const [columns, setColumns] = useState<ColumnDef<GenericData>[]>(
     getColumns(placeholder.toLowerCase())
@@ -41,14 +37,16 @@ export default function Home() {
 
   // Fetch data and update columns whenever the selected value changes
   React.useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/" + selectedValue, {
-        headers: { cursor: 0 },
-      })
-      .then((response) => {
-        setData(response.data);
-        setColumns(getColumns(selectedValue));
+    async function fetchData() {
+      const fetchedData = await axios.get(`/api/${selectedValue}`, {
+        headers: {
+          cursor: 0,
+        },
       });
+      setData(fetchedData.data);
+      setColumns(getColumns(selectedValue));
+    }
+    fetchData();
   }, [selectedValue]);
 
   return (
@@ -77,7 +75,9 @@ export default function Home() {
         </div>
 
         <div className="flex pb-0">
-          <Select onValueChange={(value) => setSelectedValue(value)}>
+          <Select
+            onValueChange={(value) => setSelectedValue(value as TableName)}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
