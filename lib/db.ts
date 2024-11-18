@@ -143,8 +143,7 @@ export async function getData(
   return id ? data.filter((d) => d.id === id) : data;
 }
 
-// export async function getVendas() {
-//   const connection = await createConnection();
-//   const [rows] = await connection.query("SELECT * FROM vendas");
-//   return rows;
-// }
+export async function get(url: string) {
+  const response = await axios.get(url);
+  return response.data;
+}
