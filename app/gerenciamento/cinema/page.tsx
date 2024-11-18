@@ -47,10 +47,6 @@ export default function Home() {
         setData(response.data);
         setColumns(getColumns(selectedValue));
       });
-      setData(fetchedData.data);
-      setColumns(getColumns(selectedValue));
-    }
-    fetchData();
   }, [selectedValue]);
 
   return (

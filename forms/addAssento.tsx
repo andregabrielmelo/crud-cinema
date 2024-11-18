@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { useTableData } from "@/lib/useTableData";
+import { Assento } from "@/lib/definitions";
 
 const assentoSchema = z.object({
   id_sala: z.coerce.number(),
@@ -18,10 +21,20 @@ export default function AddCinema() {
     resolver: zodResolver(assentoSchema),
   });
 
+  const { addItem } = useTableData();
+
   function addAssento(data: AssentoSchema) {
-    console.log(data);
-    axios.post("http://localhost:3000/api/assentos", data).then((response) => {
-      console.log(response);
+    const resAxios = axios.post("/api/assentos", data).then((res) => {
+      const newData: Assento = {
+        id: res.data,
+        ...data,
+      };
+      addItem(newData);
+    });
+    toast.promise(resAxios, {
+      error: (e) => e?.response?.data ?? "Erro ao incluir o assento",
+      loading: "Incluindo assento",
+      success: "Assento incluido com sucesso",
     });
   }
 

@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { useTableData } from "@/lib/useTableData";
+import { Produto } from "@/lib/definitions";
 
 const produtoSchema = z.object({
   nome: z.string(),
@@ -17,10 +20,20 @@ export default function AddCinema() {
     resolver: zodResolver(produtoSchema),
   });
 
+  const { addItem } = useTableData();
+
   function addAssento(data: ProdutoSchema) {
-    console.log(data);
-    axios.post("http://localhost:3000/api/produtos", data).then((response) => {
-      console.log(response);
+    const resAxios = axios.post("/api/produtos", data).then((response) => {
+      const newData: Produto = {
+        id: response.data,
+        ...data,
+      };
+      addItem(newData)
+    });
+    toast.promise(resAxios, {
+      error: (e) => e?.response?.data ?? "Erro ao incluir o assento",
+      loading: "Incluindo produto",
+      success: "Produto incluido com sucesso",
     });
   }
 

@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { useTableData } from "@/lib/useTableData";
+import { Sala } from "@/lib/definitions";
+import toast from "react-hot-toast";
 
 const salaSchema = z.object({
   bloco: z.string(),
   numero: z.coerce.number(),
-  total_de_assentos: z.coerce.number(),
 });
 
 type SalaSchema = z.infer<typeof salaSchema>;
@@ -18,10 +20,21 @@ export default function AddCinema() {
     resolver: zodResolver(salaSchema),
   });
 
+  const { addItem } = useTableData();
+
   function addAssento(data: SalaSchema) {
-    console.log(data);
-    axios.post("http://localhost:3000/api/salas", data).then((response) => {
-      console.log(response);
+    const resAxios = axios.post("/api/salas", data).then((response) => {
+      const newData: Sala = {
+        id: response.data,
+        total_de_assentos: 0,
+        ...data,
+      };
+      addItem(newData);
+    });
+    toast.promise(resAxios, {
+      error: "Erro ao incluir a sala",
+      loading: "Incluindo sala",
+      success: "Sala incluida com sucesso",
     });
   }
 
@@ -33,10 +46,6 @@ export default function AddCinema() {
       >
         <Input {...register("bloco")} placeholder="Bloco" />
         <Input {...register("numero")} placeholder="Número" />
-        <Input
-          {...register("total_de_assentos")}
-          placeholder="Total de Assentos"
-        />
         <Button type="submit">Add</Button>
       </form>
     </>
