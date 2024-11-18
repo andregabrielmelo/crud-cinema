@@ -59,8 +59,8 @@ export async function POST(request: NextRequest) {
         return new NextResponse(newSeat.id.toString(), {
             status: 200
         })
-    } catch {
-        return new NextResponse("erro ao incluir o assento", {
+    } catch (e) {
+        return new NextResponse(JSON.stringify(e), {
             status: 400
         })
     }
