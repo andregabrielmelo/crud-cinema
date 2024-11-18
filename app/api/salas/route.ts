@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { DeleteSeat } from "../assentos/route";
 
 export async function GET(request: NextRequest) {
     const cursor = request.headers.get("cursor")
@@ -46,11 +47,12 @@ export async function DELETE(request: NextRequest) {
         })
     }
     try {
-        await prisma.assentos.deleteMany({
+        const seats = await prisma.assentos.findMany({
             where: {
                 id_sala: parseInt(itemID)
             }
         })
+        seats.forEach(async item => await DeleteSeat(item.id))
         await prisma.salas.delete({
             where: {
                 id: parseInt(itemID)

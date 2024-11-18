@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
             data: {
                 horario_venda: bodyData.horario_venda,
                 preco: bodyData.preco,
-                descricao: `Rembolso de ingresso - ${sessionRegister.nome_do_filme} - Assento ${seatRegister.codigo}, Bloco ${seatRegister.salas.bloco} Sala ${seatRegister.salas.numero}, Sessão ${sessionRegister.id}`
+                descricao: `Venda de ingresso - ${sessionRegister.nome_do_filme} - Assento ${seatRegister.codigo}, Bloco ${seatRegister.salas.bloco} Sala ${seatRegister.salas.numero}, Sessão ${sessionRegister.id}`
             }
         })
 
@@ -99,7 +99,7 @@ export async function DeleteTicket(itemID: number) {
         data: {
             horario_venda: new Date(),
             preco: (ticketData.preco?.toNumber() ?? 0) * -1,
-            descricao: `Venda de ingresso - ${ticketData.sessoes.nome_do_filme} - Assento ${ticketData.assentos.codigo}, Bloco ${ticketData.assentos.salas.bloco} Sala ${ticketData.assentos.salas.bloco}, Sessão ${ticketData.sessoes.id}`
+            descricao: `Reembolso de ingresso - ${ticketData.sessoes.nome_do_filme} - Assento ${ticketData.assentos.codigo}, Bloco ${ticketData.assentos.salas.bloco} Sala ${ticketData.assentos.salas.bloco}, Sessão ${ticketData.sessoes.id}`
         }
     })
 

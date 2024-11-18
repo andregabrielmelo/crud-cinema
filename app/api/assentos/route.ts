@@ -94,33 +94,35 @@ export async function POST(request: NextRequest) {
 
 }
 
-export async function DELETE(request: NextRequest) {
-    const itemID = request.headers.get("id")
-    if (!itemID) {
-        return new NextResponse("id é obrigatório", {
-            status: 400
-        })
-    }
-    try {
-        await prisma.assentos.delete({
-            where: {
-                id: parseInt(itemID)
-            }
-        })
-        const tickets = await prisma.ingressos.findMany({
-            where: {
-                id_assento: parseInt(itemID),
-                sessoes: {
-                    horario_inicial: {
-                        gte: new Date()
-                    }
+export async function DeleteSeat(itemID: number) {
+    await prisma.assentos.delete({
+        where: {
+            id: itemID
+        }
+    })
+    const tickets = await prisma.ingressos.findMany({
+        where: {
+            id_assento: itemID,
+            sessoes: {
+                horario_inicial: {
+                    gte: new Date()
                 }
             }
-        })
-        await tickets.map(async (item) => {
-            await DeleteTicket(item.id)
-        })
+        }
+    })
+    await tickets.map(async (item) => {
+        await DeleteTicket(item.id)
+    })
+}
 
+export async function DELETE(request: NextRequest) {
+    try {
+        const itemID = request.headers.get("id")
+        if (!itemID) {
+            throw "id é obrigatório"
+        }
+
+        await DeleteSeat(parseInt(itemID))
         return new NextResponse("assento excluido", {
             status: 200
         })
@@ -136,13 +138,12 @@ export async function PUT(request: NextRequest) {
         const bodyData: Prisma.$assentosPayload["scalars"] = await request.json()
         const itemID = request.headers.get("id")
         if (!itemID) {
-            return new NextResponse("id é obrigatório", {
-                status: 400
-            })
+            throw "id é obrigatório"
         }
         await prisma.assentos.update({
             data: {
-                codigo: bodyData.codigo
+                codigo: bodyData.codigo,
+                vip : bodyData.vip
             },
             where:
             {

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { DeleteTicket } from "../ingressos/route";
 
 export async function GET(request: NextRequest) {
     const cursor = request.headers.get("cursor")
@@ -73,6 +74,19 @@ export async function DELETE(request: NextRequest) {
         if (!itemID) {
             return new NextResponse("id é obrigatório", {
                 status: 400
+            })
+        }
+        const session = await prisma.sessoes.findFirst({
+            where: {
+                id: parseInt(itemID)
+            },
+            include: {
+                ingressos: true
+            }
+        })
+        if ((session?.horario_inicial.getTime() ?? 0) > Date.now()) {
+            session?.ingressos.forEach(item => {
+                DeleteTicket(item.id)
             })
         }
         await prisma.sessoes.delete({
