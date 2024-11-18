@@ -13,13 +13,27 @@ import {
 import { TableProps, TableRowProps } from "react-table";
 import { TableName } from "@/lib/definitions";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { useTableData } from "@/lib/useTableData";
 
 const DataTableRowActions = (props: any, tableName: TableName) => {
+  const { deleteItem: deleteTableitem } = useTableData();
   const deleteItem = () => {
-    axios.delete(`/api/${tableName}`, {
-      headers: {
-        id: props.row.original.id,
-      },
+    const deletePromise = axios
+      .delete(`/api/${tableName}`, {
+        headers: {
+          id: props.row.original.id,
+        },
+      })
+      .then(() => {
+        deleteTableitem(props.row.original.id);
+      })
+      .catch((e) => console.error(e));
+
+    toast.promise(deletePromise, {
+      error: "Erro ao excluir o registro",
+      loading: "Excluindo",
+      success: "Registro excluido com sucesso",
     });
   };
   return (

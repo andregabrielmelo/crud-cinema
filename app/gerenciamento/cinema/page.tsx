@@ -27,21 +27,25 @@ import {
 
 import type { ColumnDef } from "@tanstack/react-table";
 import type { GenericData, TableName } from "@/lib/definitions";
+import toast from "react-hot-toast";
+import { useTableData } from "@/lib/useTableData";
 
 export default function Home() {
   const [selectedValue, setSelectedValue] = useState<TableName>("assentos");
-  const [data, setData] = useState<GenericData[]>([]);
+  const { data, setData } = useTableData();
   const [columns, setColumns] = useState<ColumnDef<GenericData>[]>(
-    getColumns(placeholder.toLowerCase())
+    getColumns("assentos")
   );
 
   // Fetch data and update columns whenever the selected value changes
   React.useEffect(() => {
-    async function fetchData() {
-      const fetchedData = await axios.get(`/api/${selectedValue}`, {
-        headers: {
-          cursor: 0,
-        },
+    axios
+      .get("/api/" + selectedValue, {
+        headers: { cursor: 0 },
+      })
+      .then((response) => {
+        setData(response.data);
+        setColumns(getColumns(selectedValue));
       });
       setData(fetchedData.data);
       setColumns(getColumns(selectedValue));
@@ -75,11 +79,9 @@ export default function Home() {
         </div>
 
         <div className="flex pb-0">
-          <Select
-            onValueChange={(value) => setSelectedValue(value as TableName)}
-          >
+          <Select onValueChange={(value: TableName) => setSelectedValue(value)}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder={placeholder} />
+              <SelectValue placeholder={"Assentos"} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="assentos">Assentos</SelectItem>
