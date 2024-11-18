@@ -29,13 +29,20 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { GenericData, TableName } from "@/lib/definitions";
 import toast from "react-hot-toast";
 import { useTableData } from "@/lib/useTableData";
+import { Dialog, DialogOverlay } from "@radix-ui/react-dialog";
+import EditModal from "@/components/editDialogs/editModal";
 
 export default function Home() {
   const [selectedValue, setSelectedValue] = useState<TableName>("assentos");
   const { data, setData } = useTableData();
   const [columns, setColumns] = useState<ColumnDef<GenericData>[]>(
-    getColumns("assentos")
+    getColumns("assentos", onEdit)
   );
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogData, setDialogData] = useState<{
+    tableName: TableName;
+    data: GenericData;
+  }>();
 
   // Fetch data and update columns whenever the selected value changes
   React.useEffect(() => {
@@ -45,9 +52,14 @@ export default function Home() {
       })
       .then((response) => {
         setData(response.data);
-        setColumns(getColumns(selectedValue));
+        setColumns(getColumns(selectedValue, onEdit));
       });
   }, [selectedValue]);
+
+  function onEdit(tableName: TableName, data: GenericData) {
+    setDialogData({ data, tableName });
+    setDialogOpen(true);
+  }
 
   return (
     <>
@@ -90,7 +102,14 @@ export default function Home() {
         <div className="container mx-auto py-2">
           <DataTable columns={columns} data={data} />
         </div>
-
+        <Dialog open={dialogOpen} onOpenChange={() => setDialogOpen(false)}>
+          {dialogData && (
+            <EditModal
+              data={dialogData?.data}
+              tableName={dialogData?.tableName}
+            />
+          )}
+        </Dialog>
         <div className="container mx-auto py-2">
           {selectedValue === "assentos" && <AddAssento />}
           {selectedValue === "salas" && <AddSala />}

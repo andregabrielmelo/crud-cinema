@@ -2,7 +2,10 @@ import type { GenericData, TableName } from "@/lib/definitions";
 import { ColumnDef } from "@tanstack/react-table";
 import DataTableRowActions from "@/components/DataTableRowActions";
 
-function getColumns(type: TableName): ColumnDef<GenericData>[] {
+function getColumns(
+  type: TableName,
+  onEdit: (type : TableName, data : GenericData) => void
+): ColumnDef<GenericData>[] {
   switch (type) {
     case "salas":
       return [
@@ -13,7 +16,7 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type),
+          cell: (props) => DataTableRowActions(props, type, onEdit),
         },
       ];
     case "assentos":
@@ -25,7 +28,7 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type),
+          cell: (props) => DataTableRowActions(props, type, onEdit),
         },
       ];
     case "produtos":
@@ -36,7 +39,7 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type),
+          cell: (props) => DataTableRowActions(props, type, onEdit),
         },
       ];
     case "sessoes":
@@ -49,7 +52,7 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type),
+          cell: (props) => DataTableRowActions(props, type, onEdit),
         },
       ];
     case "ingressos":
@@ -62,7 +65,7 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type),
+          cell: (props) => DataTableRowActions(props, type, onEdit),
         },
       ];
     case "vendas":
@@ -74,7 +77,7 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type),
+          cell: (props) => DataTableRowActions(props, type, onEdit),
         },
       ];
     default:

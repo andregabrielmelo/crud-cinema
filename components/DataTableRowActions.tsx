@@ -6,17 +6,20 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TableProps, TableRowProps } from "react-table";
-import { TableName } from "@/lib/definitions";
+import { GenericData, TableName } from "@/lib/definitions";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useTableData } from "@/lib/useTableData";
+import { Dialog, DialogTrigger } from "./ui/dialog";
+import EditModal from "./editDialogs/editModal";
 
-const DataTableRowActions = (props: any, tableName: TableName) => {
+const DataTableRowActions = (
+  props: any,
+  tableName: TableName,
+  onEdit: (type: TableName, data: GenericData) => void
+) => {
   const { deleteItem: deleteTableitem } = useTableData();
   const deleteItem = () => {
     const deletePromise = axios
@@ -36,6 +39,10 @@ const DataTableRowActions = (props: any, tableName: TableName) => {
       success: "Registro excluido com sucesso",
     });
   };
+
+  const editItem = () => {
+    onEdit(tableName, props.row.original);
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -45,7 +52,7 @@ const DataTableRowActions = (props: any, tableName: TableName) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>Editar</DropdownMenuItem>
+        <DropdownMenuItem onClick={editItem}>Editar</DropdownMenuItem>
         <DropdownMenuItem onClick={deleteItem}>Deletar</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
