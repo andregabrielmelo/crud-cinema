@@ -81,14 +81,14 @@ export async function PUT(request: NextRequest) {
                 id_sala: parseInt(itemID)
             }
         })
-        await prisma.salas.update({
+        const editedItem = await prisma.salas.update({
             data: bodyData,
             where:
             {
                 id: parseInt(itemID)
             }
         })
-        return new NextResponse("sala editada com sucesso", {
+        return new NextResponse(JSON.stringify(editedItem), {
             status: 200
         })
     } catch (e) {
