@@ -38,7 +38,6 @@ export async function POST(request: NextRequest) {
 
 }
 
-
 export async function DELETE(request: NextRequest) {
     const itemID = request.headers.get("id")
     if (!itemID) {
@@ -67,7 +66,6 @@ export async function DELETE(request: NextRequest) {
         status: 200
     })
 }
-
 
 export async function PUT(request: NextRequest) {
     try {
