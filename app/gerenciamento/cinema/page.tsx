@@ -107,6 +107,7 @@ export default function Home() {
             <EditModal
               data={dialogData?.data}
               tableName={dialogData?.tableName}
+              onClose={() => setDialogOpen(false)}
             />
           )}
         </Dialog>

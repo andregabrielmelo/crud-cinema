@@ -1,4 +1,4 @@
-import { Sala } from "@/lib/definitions";
+import { Assento, Sala } from "@/lib/definitions";
 import { FormEvent, useState } from "react";
 import {
   Dialog,
@@ -12,18 +12,22 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import axios from "axios";
 import { useTableData } from "@/lib/useTableData";
+import { Checkbox } from "../ui/checkbox";
 
-export default function EditSala(props: { data: Sala; onClose: () => void }) {
+export default function EditAssento(props: {
+  data: Assento;
+  onClose: () => void;
+}) {
   const { data, onClose } = props;
   const { editItem } = useTableData();
   const confirmEdit = (e: FormEvent) => {
     e.preventDefault();
     axios
       .put(
-        "/api/salas/",
+        "/api/assentos/",
         {
-          bloco: (e as any).target[0].value.toString(),
-          numero: parseInt((e as any).target[1].value),
+          codigo: (e as any).target[0].value,
+          vip: (e as any).target[1].getAttribute(["aria-checked"]) == "true",
         },
         {
           headers: {
@@ -41,21 +45,21 @@ export default function EditSala(props: { data: Sala; onClose: () => void }) {
   return (
     <DialogContent className="sm:max-w-[425px]">
       <DialogHeader>
-        <DialogTitle>Editar sala</DialogTitle>
+        <DialogTitle>Editar Assento</DialogTitle>
       </DialogHeader>
       <form onSubmit={confirmEdit}>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Bloco
+              Código
             </Label>
-            <Input defaultValue={data.bloco} className="col-span-3" />
+            <Input defaultValue={data.codigo} className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="username" className="text-right">
-              Numero
+              VIP
             </Label>
-            <Input defaultValue={data.numero} className="col-span-3" />
+            <Checkbox defaultChecked={data.vip} className="col-span-3" />
           </div>
         </div>
         <DialogFooter>
