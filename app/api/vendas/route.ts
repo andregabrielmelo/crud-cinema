@@ -10,14 +10,14 @@ type productsList = Array<
 
 export async function GET(request: NextRequest) {
     const cursor = request.headers.get("cursor")
-    if (!cursor){
+    if (!cursor) {
         return new NextResponse("cursor é obrigatório", {
             status: 400
         })
     }
     const vendas = await prisma.vendas.findMany({
-        skip : parseInt(cursor) * 20,
-        take : 20
+        skip: parseInt(cursor) * 20,
+        take: 20
     })
     return new NextResponse(JSON.stringify(vendas), {
         status: 200,
@@ -56,8 +56,8 @@ export async function POST(request: NextRequest) {
             data:
                 bodyData.map(item => ({
                     descricao: `Produto - ${item.quantidade ?? 1} ${item.nome}`,
-                    preco : parseFloat(item.preco.toString()) * (item.quantidade ?? 1),
-                    horario_venda : new Date()
+                    preco: parseFloat(item.preco.toString()) * (item.quantidade ?? 1),
+                    horario_venda: new Date()
                 }))
         })
 
@@ -65,8 +65,7 @@ export async function POST(request: NextRequest) {
             status: 200
         })
     } catch (e) {
-        console.log(e)
-        return new NextResponse("erro ao incluir o registro", {
+        return new NextResponse(JSON.stringify(e), {
             status: 400
         })
     }

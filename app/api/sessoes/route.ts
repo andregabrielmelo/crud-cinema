@@ -117,14 +117,14 @@ export async function PUT(request: NextRequest) {
         if (await checkRoomavailability(bodyData.id_sala, bodyData.horario_inicial, bodyData.horario_final)) {
             throw "Este horario já está sendo utilizado nesta sala"
         }
-        await prisma.sessoes.update({
+        const editedItem = await prisma.sessoes.update({
             data: bodyData,
             where:
             {
                 id: parseInt(itemID)
             }
         })
-        return new NextResponse("registro editado com sucesso", {
+        return new NextResponse(JSON.stringify(editedItem), {
             status: 200
         })
     } catch (e) {

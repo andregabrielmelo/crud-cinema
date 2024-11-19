@@ -140,7 +140,7 @@ export async function PUT(request: NextRequest) {
         if (!itemID) {
             throw "id é obrigatório"
         }
-        await prisma.assentos.update({
+        const editedItem = await prisma.assentos.update({
             data: {
                 codigo: bodyData.codigo,
                 vip : bodyData.vip
@@ -150,7 +150,7 @@ export async function PUT(request: NextRequest) {
                 id: parseInt(itemID)
             }
         })
-        return new NextResponse("assento editado com sucesso", {
+        return new NextResponse(JSON.stringify(editedItem), {
             status: 200
         })
     } catch (e) {
