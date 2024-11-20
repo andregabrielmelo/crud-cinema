@@ -42,6 +42,7 @@ export async function DELETE(request: NextRequest) {
       status: 400,
     });
   }
+
   return new NextResponse("assento excluido", {
     status: 200,
   });

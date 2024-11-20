@@ -6,41 +6,63 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-import type { GenericData } from "@/lib/definitions";
+import { TableName } from "@/lib/definitions";
 import axios from "axios";
+import { toast } from "react-hot-toast";
+import { useTableData } from "@/lib/useTableData";
 
-interface DataTableRowActionsProps<GenericData> {
-  row: GenericData;
-  tableName: string;
-}
-
-const onEdit = (row: GenericData) => {
-  // Edit current row
-  console.log("Editing row with ID:", row.id);
+type dropMenuOptions = {
+  edit: boolean;
+  delete: boolean;
 };
 
-const onDelete = (row: GenericData, tableName: string) => {
-  // Delete current row
-  axios
-    .delete("http://localhost:3000/api/" + tableName, {
-      headers: {
-        id: row.id,
-      },
-    })
-    .then((response) => {
-      console.log(response);
-    });
+type DataTableRowActionsProps = {
+  row: any; // Replace `any` with the proper type for your row data
+  tableName: TableName;
+  menuOption?: dropMenuOptions;
 };
 
-const DataTableRowActions = ({
+const DataTableRowActions: React.FC<DataTableRowActionsProps> = ({
   row,
   tableName,
-}: DataTableRowActionsProps<GenericData>) => {
+  menuOption = { delete: true, edit: true },
+}) => {
+  const { deleteItem: deleteTableitem } = useTableData();
+  const { editModal } = useTableData();
+
+  const deleteItem = () => {
+    console.log("Tabela: ", tableName);
+    console.log(row.original.id);
+    const deletePromise = axios
+      .delete(`/api/${tableName}`, {
+        headers: {
+          id: row.original.id,
+        },
+      })
+      .then(() => {
+        deleteTableitem(row.original.id);
+      })
+      .catch((error) => {
+        console.error("Delete Error:", error.response?.data || error.message);
+        console.log("Error: ", error);
+      });
+
+    toast.promise(deletePromise, {
+      error: "Erro ao excluir o registro",
+      loading: "Excluindo",
+      success: "Registro excluido com sucesso",
+    });
+  };
+
+  const editItem = () => {
+    editModal.setData({
+      data: row.original,
+      tableName: tableName,
+    });
+    editModal.setOpen(true);
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -50,12 +72,12 @@ const DataTableRowActions = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => onEdit(row)}>Edit</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onDelete(row, tableName)}>
-          Delete
-        </DropdownMenuItem>
+        {menuOption.edit && (
+          <DropdownMenuItem onClick={editItem}>Editar</DropdownMenuItem>
+        )}
+        {menuOption.delete && (
+          <DropdownMenuItem onClick={deleteItem}>Deletar</DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

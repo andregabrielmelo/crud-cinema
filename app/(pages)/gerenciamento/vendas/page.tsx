@@ -1,4 +1,6 @@
-import Link from "next/link";
+import { DataTable } from "@/components/DataTable";
+import AddVenda from "./vendaForm";
+import { columns } from "./columns";
 
 import {
   Breadcrumb,
@@ -8,18 +10,26 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { getVendas } from "@/lib/db";
 
 export default async function Home() {
+  const data = await getVendas(0);
+
   return (
     <>
       <section className="container mx-auto py-2">
-        <h1 className="title pb-2">Gerenciamento</h1>
-
-        <div className="flex pb-2">
+        <h1 className="title pb-2">Vendas</h1>
+        <div className="flex">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/gerenciamento">
+                  Gerenciamento
+                </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
@@ -28,15 +38,12 @@ export default async function Home() {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
+        <div className="container mx-auto py-10">
+          <DataTable columns={columns} data={data} />
+        </div>
 
-        <p>Qual das partes abaixo você deseja visualizar?</p>
-        <div className="flex container items-center font-bold text-2xl gap-5 mx-auto py-10">
-          <Link href={"/gerenciamento/cinema"}>
-            <span className="hover:opacity-80 hover:underline">Cinema</span>
-          </Link>
-          <Link href={"/gerenciamento/filmes"}>
-            <span className="hover:opacity-80 hover:underline">Filmes</span>
-          </Link>
+        <div className="container mx-auto py-2">
+          <AddVenda />
         </div>
       </section>
     </>

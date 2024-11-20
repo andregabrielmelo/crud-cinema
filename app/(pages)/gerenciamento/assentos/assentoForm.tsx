@@ -1,3 +1,5 @@
+"use client";
+
 import z from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,28 +15,23 @@ const assentoSchema = z.object({
 
 type AssentoSchema = z.infer<typeof assentoSchema>;
 
-export default function AddCinema() {
+export default function AddAssento() {
   const { register, handleSubmit } = useForm<AssentoSchema>({
     resolver: zodResolver(assentoSchema),
   });
 
-  function addAssento(data: AssentoSchema) {
-    console.log(data);
+  function add(data: AssentoSchema) {
     axios.post("http://localhost:3000/api/assentos", data).then((response) => {
       console.log(response);
-      window.location.reload(); // Refresh the page after successful submission
     });
   }
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit(addAssento)}
-        className="flex items-center gap-2"
-      >
-        <Input {...register("id_sala")} placeholder="Sala" />
+      <form onSubmit={handleSubmit(add)} className="flex items-center gap-2">
+        <Input {...register("id_sala")} placeholder="Sala ID" />
         <Input {...register("codigo")} placeholder="Código" />
-        <Input {...register("vip")} placeholder="vip" />
+        <Input {...register("vip")} placeholder="VIP" />
         <Button type="submit">Add</Button>
       </form>
     </>

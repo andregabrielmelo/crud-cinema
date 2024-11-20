@@ -6,9 +6,9 @@ export type Sala = {
 };
 
 export type Assento = {
-  id: string;
-  id_sala: string;
-  codigo: number;
+  id: number;
+  id_sala: number;
+  codigo: string;
   vip: boolean;
 };
 
@@ -41,4 +41,11 @@ export type Venda = {
   datetime: string;
 };
 
+export type TableName =
+  | "vendas"
+  | "assentos"
+  | "salas"
+  | "produtos"
+  | "ingressos"
+  | "sessoes";
 export type GenericData = Venda | Assento | Sala | Produto | Ingresso | Sessao;

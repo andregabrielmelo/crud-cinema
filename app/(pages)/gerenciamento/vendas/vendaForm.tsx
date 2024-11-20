@@ -14,24 +14,20 @@ const vendaSchema = z.object({
 
 type VendaSchema = z.infer<typeof vendaSchema>;
 
-export default function AddVend() {
+export default function AddVenda() {
   const { register, handleSubmit } = useForm<VendaSchema>({
     resolver: zodResolver(vendaSchema),
   });
 
-  function addAssento(data: VendaSchema) {
+  function add(data: VendaSchema) {
     axios.post("http://localhost:3000/api/vendas", data).then((response) => {
       console.log(response);
-      window.location.reload(); // Refresh the page after successful submission
     });
   }
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit(addAssento)}
-        className="flex items-center gap-2"
-      >
+      <form onSubmit={handleSubmit(add)} className="flex items-center gap-2">
         <Input {...register("descricao")} placeholder="Descrição" />
         <Input {...register("preco")} placeholder="Preço" />
         <Button type="submit">Add</Button>
