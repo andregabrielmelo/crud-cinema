@@ -43,7 +43,7 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
       return [
         { accessorKey: "id", header: "ID" },
         { accessorKey: "id_sala", header: "Sala ID" },
-        { accessorKey: "filme", header: "Filme" },
+        { accessorKey: "nome_do_filme", header: "Filme" },
         { accessorKey: "horario_inicial", header: "Horário Inicial" },
         { accessorKey: "horario_final", header: "Horário Final" },
         {
@@ -74,7 +74,8 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type),
+          cell: (props) =>
+            DataTableRowActions(props, type, { edit: false, delete: true }),
         },
       ];
     default:

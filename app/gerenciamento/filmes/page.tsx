@@ -2,8 +2,6 @@
 
 import React, { useState } from "react";
 import { DataTable } from "@/components/DataTable";
-import AddSessao from "@/forms/addSessao";
-import AddIngresso from "@/forms/addIngresso";
 import axios from "axios";
 
 import {
@@ -14,45 +12,25 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 import type { ColumnDef } from "@tanstack/react-table";
 import getColumns from "@/lib/columns";
 import type { GenericData, TableName } from "@/lib/definitions";
-import { Dialog } from "@/components/ui/dialog";
 import EditModal from "@/components/editDialogs/editModal";
-import { useTableData } from "@/lib/useTableData";
 
 export default function Home() {
-  const [selectedValue, setSelectedValue] = useState<TableName>("assentos");
   const [data, setData] = useState<GenericData[]>([]);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogData, setDialogData] = useState<{
-    tableName: TableName;
-    data: GenericData;
-  }>();
-  const [columns, setColumns] = useState<ColumnDef<GenericData>[]>(
-    getColumns("assentos")
-  );
+  const columns = getColumns("sessoes");
 
   // Fetch data and update columns whenever the selected value changes
   React.useEffect(() => {
     axios
-      .get("http://localhost:3000/api/" + selectedValue, {
+      .get("/api/sessoes", {
         headers: { cursor: 0 },
       })
       .then((response) => {
         setData(response.data);
-        setColumns(getColumns(selectedValue));
       });
-  }, [selectedValue]);
+  }, []);
 
   return (
     <>
@@ -79,36 +57,11 @@ export default function Home() {
           </Breadcrumb>
         </div>
 
-        <div className="flex pb-0">
-          <Select onValueChange={(value) => setSelectedValue(value)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder={placeholder} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ingressos">Ingressos</SelectItem>
-              <SelectItem value="sessoes">Sessões</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
         <div className="container mx-auto py-2">
           <DataTable columns={columns} data={data} />
         </div>
 
-        <Dialog open={dialogOpen} onOpenChange={() => setDialogOpen(false)}>
-          {dialogData && (
-            <EditModal
-              data={dialogData?.data}
-              tableName={dialogData?.tableName}
-              onClose={() => setDialogOpen(false)}
-            />
-          )}
-        </Dialog>
-
-        <div className="container mx-auto py-2">
-          {selectedValue === "ingressos" && <AddIngresso />}
-          {selectedValue === "sessoes" && <AddSessao />}
-        </div>
+        <EditModal />
       </section>
     </>
   );

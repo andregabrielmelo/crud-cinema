@@ -15,7 +15,19 @@ import { useTableData } from "@/lib/useTableData";
 import { Dialog, DialogTrigger } from "./ui/dialog";
 import EditModal from "./editDialogs/editModal";
 
-const DataTableRowActions = (props: any, tableName: TableName) => {
+type dropMenuOptions = {
+  edit: boolean;
+  delete: boolean;
+};
+
+const DataTableRowActions = (
+  props: any,
+  tableName: TableName,
+  menuOption: dropMenuOptions = {
+    delete: true,
+    edit: true,
+  }
+) => {
   const { deleteItem: deleteTableitem } = useTableData();
   const { editModal } = useTableData();
 
@@ -54,8 +66,12 @@ const DataTableRowActions = (props: any, tableName: TableName) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={editItem}>Editar</DropdownMenuItem>
-        <DropdownMenuItem onClick={deleteItem}>Deletar</DropdownMenuItem>
+        {menuOption.edit && (
+          <DropdownMenuItem onClick={editItem}>Editar</DropdownMenuItem>
+        )}
+        {menuOption.delete && (
+          <DropdownMenuItem onClick={deleteItem}>Deletar</DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

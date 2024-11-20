@@ -1,22 +1,33 @@
-import { Assento, GenericData, Produto, Sala, TableName } from "@/lib/definitions";
+import {
+  Assento,
+  GenericData,
+  Produto,
+  Sala,
+  Sessao,
+  TableName,
+} from "@/lib/definitions";
 import EditSala from "./editSala";
 import { ReactElement } from "react";
 import EditAssento from "./editAssento";
 import EditProduto from "./editProduto";
+import EditSessao from "./editSessao";
+import { useTableData } from "@/lib/useTableData";
+import { Dialog } from "../ui/dialog";
 
-export default function EditModal(props: {
-  tableName: TableName;
-  data: GenericData;
-  onClose: () => void;
-}) {
-  const { data, tableName, onClose } = props;
-  const editModal: {
+export default function EditModal() {
+  const { editModal } = useTableData();
+  const editModalTabs: {
     [key: string]: ReactElement;
   } = {
-    salas: <EditSala data={data as Sala} onClose={onClose} />,
-    assentos: <EditAssento data={data as Assento} onClose={onClose} />,
-    produtos: <EditProduto data={data as Produto} onClose={onClose} />,
+    salas: <EditSala />,
+    assentos: <EditAssento />,
+    produtos: <EditProduto />,
+    sessoes: <EditSessao />,
   };
 
-  return editModal[tableName];
+  return (
+    <Dialog open={editModal.open} onOpenChange={() => editModal.setOpen(false)}>
+      {editModal.data?.tableName && editModalTabs[editModal.data?.tableName]}
+    </Dialog>
+  );
 }

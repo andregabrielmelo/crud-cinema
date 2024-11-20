@@ -13,9 +13,11 @@ import { Button } from "../ui/button";
 import axios from "axios";
 import { useTableData } from "@/lib/useTableData";
 
-export default function EditProduto(props: { data: Produto; onClose: () => void }) {
-  const { data, onClose } = props;
-  const { editItem } = useTableData();
+export default function EditProduto() {
+  const { editItem, editModal } = useTableData();
+  const [data, setOpen] = [editModal.data?.data as Produto, editModal.setOpen];
+  const onClose = () => setOpen(false);
+
   const confirmEdit = (e: FormEvent) => {
     e.preventDefault();
     axios

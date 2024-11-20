@@ -1,4 +1,4 @@
-import { Assento, Sala } from "@/lib/definitions";
+import { Assento, Sala, Sessao } from "@/lib/definitions";
 import { FormEvent, useState } from "react";
 import {
   Dialog,
@@ -14,11 +14,10 @@ import axios from "axios";
 import { useTableData } from "@/lib/useTableData";
 import { Checkbox } from "../ui/checkbox";
 
-export default function EditAssento() {
+export default function EditSessao() {
   const { editItem, editModal } = useTableData();
-  const [data, setOpen] = [editModal.data?.data as Assento, editModal.setOpen];
+  const [data, setOpen] = [editModal.data?.data as Sessao, editModal.setOpen];
   const onClose = () => setOpen(false);
-
   const confirmEdit = (e: FormEvent) => {
     e.preventDefault();
     axios
@@ -40,25 +39,37 @@ export default function EditAssento() {
       })
       .catch((e) => console.error(e));
   };
-
+  console.log(data);
   return (
     <DialogContent className="sm:max-w-[425px]">
       <DialogHeader>
-        <DialogTitle>Editar Assento</DialogTitle>
+        <DialogTitle>Editar Sessao</DialogTitle>
       </DialogHeader>
       <form onSubmit={confirmEdit}>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Código
+              ID da sala
             </Label>
-            <Input defaultValue={data.codigo} className="col-span-3" />
+            <Input defaultValue={data.id_sala} className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
-              VIP
+            <Label htmlFor="name" className="text-right">
+              Filme
             </Label>
-            <Checkbox defaultChecked={data.vip} className="col-span-3" />
+            <Input defaultValue={data.nome_do_filme} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              Inicio
+            </Label>
+            <Input defaultValue={data.horario_inicial} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              Fim
+            </Label>
+            <Input defaultValue={data.horario_final} className="col-span-3" />
           </div>
         </div>
         <DialogFooter>
