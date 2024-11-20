@@ -57,12 +57,14 @@ const DataTableRowActions: React.FC<DataTableRowActionsProps> = ({
   };
 
   const editItem = () => {
+    console.log("Setting edit modal data:", row.original, tableName);
     editModal.setData({
       data: row.original,
       tableName: tableName,
     });
     editModal.setOpen(true);
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

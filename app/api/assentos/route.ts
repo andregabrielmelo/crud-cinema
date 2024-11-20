@@ -3,42 +3,56 @@ import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+  // Verifica se o cursor foi passado na requisição
   const cursor = request.headers.get("cursor");
   if (!cursor) {
     return new NextResponse("cursor é obrigatório", {
       status: 400,
     });
   }
+
+  // Pega os assentos solicitados
+  // É pego 20 assentos por vez
+  // Pula os (cursor * 20) primeiros assentos
   const assentos = await prisma.assentos.findMany({
     skip: parseInt(cursor) * 20,
     take: 20,
   });
+
+  // Retorna os assentos em formato JSON com status 200
   return new NextResponse(JSON.stringify(assentos), {
     status: 200,
+    statusText: "OK",
   });
 }
 
 export async function DELETE(request: NextRequest) {
   const itemID = request.headers.get("id");
-  console.log("ItemID: ", itemID);
+
+  // Verifica se o id foi passado na requisição
   if (!itemID) {
-    return new NextResponse("id é obrigatório " + itemID, {
+    return new NextResponse("O id é obrigatório, não pode ser: " + itemID, {
       status: 400,
+      statusText: "Bad Request",
     });
   }
+
+  // Tenta deletar o assento com o id passado
   try {
     await prisma.assentos.delete({
       where: {
         id: parseInt(itemID),
       },
     });
-  } catch (e) {
-    return new NextResponse("erro ao excluir o assento", {
+  } catch (error) {
+    return new NextResponse("Erro ao excluir o assento\n" + error, {
       status: 400,
+      statusText: "Bad Request",
     });
   }
   return new NextResponse("assento excluido", {
     status: 200,
+    statusText: "OK",
   });
 }
 
