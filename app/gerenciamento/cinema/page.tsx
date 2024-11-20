@@ -90,18 +90,9 @@ export default function Home() {
         <div className="container mx-auto py-2">
           <DataTable columns={columns} data={data} />
         </div>
-        <Dialog
-          open={editModal.open}
-          onOpenChange={() => editModal.setOpen(false)}
-        >
-          {editModal.data && (
-            <EditModal
-              data={editModal?.data.data}
-              tableName={editModal?.data.tableName}
-              onClose={() => editModal.setOpen(false)}
-            />
-          )}
-        </Dialog>
+
+        <EditModal />
+
         <div className="container mx-auto py-2">
           {selectedValue === "assentos" && <AddAssento />}
           {selectedValue === "salas" && <AddSala />}

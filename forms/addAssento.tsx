@@ -7,6 +7,9 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useTableData } from "@/lib/useTableData";
 import { Assento } from "@/lib/definitions";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@radix-ui/react-label";
+import { useState } from "react";
 
 const assentoSchema = z.object({
   id_sala: z.coerce.number(),
@@ -22,12 +25,15 @@ export default function AddCinema() {
   });
 
   const { addItem } = useTableData();
-
+  const [vip, setVip] = useState(false);
   function addAssento(data: AssentoSchema) {
+    data.vip = vip
     const resAxios = axios.post("/api/assentos", data).then((res) => {
       const newData: Assento = {
         id: res.data,
-        ...data,
+        codigo: data.codigo,
+        id_sala: data.id_sala,
+        vip: vip,
       };
       addItem(newData);
     });
@@ -46,7 +52,17 @@ export default function AddCinema() {
       >
         <Input {...register("id_sala")} placeholder="Sala" />
         <Input {...register("codigo")} placeholder="Código" />
-        <Input {...register("vip")} placeholder="vip" />
+        <div className="flex gap-4 items-center">
+          <Label>VIP</Label>
+          <Checkbox
+            defaultChecked={vip}
+            onClick={(e) =>
+              setVip(
+                (e.target as any).getAttribute(["aria-checked"]) == "false"
+              )
+            }
+          />
+        </div>
         <Button type="submit">Add</Button>
       </form>
     </>

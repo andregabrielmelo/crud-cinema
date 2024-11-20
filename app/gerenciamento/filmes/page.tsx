@@ -17,6 +17,7 @@ import getColumns from "@/lib/columns";
 import type { GenericData, TableName } from "@/lib/definitions";
 import EditModal from "@/components/editDialogs/editModal";
 import { useTableData } from "@/lib/useTableData";
+import AddSessao from "@/forms/addSessao";
 
 export default function Home() {
   const { data, setData } = useTableData();
@@ -61,7 +62,9 @@ export default function Home() {
         <div className="container mx-auto py-2">
           <DataTable columns={columns} data={data} />
         </div>
-
+        <div className="container mx-auto py-2">
+          <AddSessao />
+        </div>
         <EditModal />
       </section>
     </>
