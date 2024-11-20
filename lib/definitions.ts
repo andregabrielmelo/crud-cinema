@@ -22,8 +22,8 @@ export type Sessao = {
   id: string;
   id_sala: string;
   nome_do_filme: string;
-  horario_inicial: Date;
-  horario_final: Date;
+  horario_inicial: string;
+  horario_final: string;
 };
 
 export type Ingresso = {
@@ -36,9 +36,9 @@ export type Ingresso = {
 
 export type Venda = {
   id: string;
-  description: string;
-  amount: number;
-  datetime: string;
+  descricao: string;
+  preco: number;
+  horario_venda: string;
 };
 
 export type TableName =

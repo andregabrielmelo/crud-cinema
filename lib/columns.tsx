@@ -77,9 +77,9 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
     case "vendas":
       return [
         { accessorKey: "id", header: "ID" },
-        { accessorKey: "description", header: "Descrição" },
-        { accessorKey: "amount", header: "Valor" },
-        { accessorKey: "datetime", header: "Data e Hora" },
+        { accessorKey: "descricao", header: "Descrição" },
+        { accessorKey: "preco", header: "Valor" },
+        { accessorKey: "horario_venda", header: "Data e Hora" },
         {
           id: "actions",
           header: "Ações",
