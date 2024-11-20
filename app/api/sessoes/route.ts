@@ -110,11 +110,14 @@ export async function PUT(request: NextRequest) {
         const bodyData: Prisma.$sessoesPayload["scalars"] = await request.json()
         const itemID = request.headers.get("id")
         if (!itemID) {
-            return new NextResponse("id é obrigatório", {
-                status: 400
-            })
+            throw "id é obrigatório"
+        } else if (!await prisma.sessoes.count({ where: { id: parseInt(itemID) } })) {
+            throw "sessão não existente"
         }
-        if (await checkRoomavailability(bodyData.id_sala, bodyData.horario_inicial, bodyData.horario_final)) {
+
+        bodyData.horario_final = new Date(bodyData.horario_final)
+        bodyData.horario_inicial = new Date(bodyData.horario_inicial)
+        if (await checkRoomavailability(bodyData.id_sala, bodyData.horario_inicial, bodyData.horario_final, parseInt(itemID))) {
             throw "Este horario já está sendo utilizado nesta sala"
         }
         const editedItem = await prisma.sessoes.update({
@@ -134,10 +137,10 @@ export async function PUT(request: NextRequest) {
     }
 }
 
-async function checkRoomavailability(salaID: number, horario_inicial: Date, horario_final: Date) {
+async function checkRoomavailability(id_sala: number, horario_inicial: Date, horario_final: Date, id_sessao?: number) {
     return await prisma.sessoes.count({
         where: {
-            id_sala: salaID,
+            id_sala: id_sala,
             OR: [
                 {
                     horario_inicial: {
@@ -168,7 +171,12 @@ async function checkRoomavailability(salaID: number, horario_inicial: Date, hora
                         }
                     ]
                 }
-            ]
+            ],
+            ...(id_sessao ? {
+                NOT: {
+                    id: id_sessao
+                }
+            } : {}),
         }
     })
 }
