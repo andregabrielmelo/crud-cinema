@@ -36,7 +36,6 @@ export default function AddSessao() {
         nome_do_filme: data.nome_do_filme,
       };
       addItem(newItemData);
-      console.log(response);
     });
   }
 
