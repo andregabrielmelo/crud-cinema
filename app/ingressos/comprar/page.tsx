@@ -58,10 +58,10 @@ export default function ComprarIngresso() {
           id_assento: row.id,
         })
         .then((res) => {
-            router.push("/ingressos")
+          router.push("/ingressos");
         });
       toast.promise(resAxios, {
-        error: "Erro ao comprar o ingresso",
+        error: (e) => e?.response?.data ?? "Erro ao compraro ingresso",
         loading: "Comprando ingresso",
         success: "Ingresso adquirido com sucesso",
       });

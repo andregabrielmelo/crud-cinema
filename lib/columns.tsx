@@ -71,7 +71,11 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type),
+          cell: (props) =>
+            DataTableRowActions(props, type, {
+              delete: true,
+              edit: false,
+            }),
         },
       ];
     case "vendas":

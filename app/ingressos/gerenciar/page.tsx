@@ -21,12 +21,12 @@ import AddSessao from "@/forms/addSessao";
 
 export default function Home() {
   const { data, setData } = useTableData();
-  const columns = getColumns("sessoes");
+  const columns = getColumns("ingressos");
 
   // Fetch data and update columns whenever the selected value changes
   React.useEffect(() => {
     axios
-      .get("/api/sessoes", {
+      .get("/api/ingressos", {
         headers: { cursor: 0 },
       })
       .then((response) => {
@@ -37,7 +37,7 @@ export default function Home() {
   return (
     <>
       <section className="container mx-auto py-2">
-        <h1 className="title pb-2">Filmes</h1>
+        <h1 className="title pb-2">Gerenciar ingressos</h1>
 
         <div className="flex pb-7">
           <Breadcrumb>
@@ -47,13 +47,13 @@ export default function Home() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink href="/gerenciamento">
-                  Gerenciamento
+                <BreadcrumbLink href="/ingressos">
+                  Ingressos
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Filmes</BreadcrumbPage>
+                <BreadcrumbPage>Gerenciar</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -61,9 +61,6 @@ export default function Home() {
 
         <div className="container mx-auto py-2">
           <DataTable columns={columns} data={data} />
-        </div>
-        <div className="container mx-auto py-2">
-          <AddSessao />
         </div>
         <EditModal />
       </section>
