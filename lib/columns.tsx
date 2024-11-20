@@ -92,4 +92,34 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
   }
 }
 
+export function getColumnsView(type: TableName): ColumnDef<GenericData>[] {
+  switch (type) {
+    case "sessoes":
+      return [
+        { accessorKey: "id", header: "ID" },
+        { accessorKey: "id_sala", header: "Sala ID" },
+        { accessorKey: "nome_do_filme", header: "Filme" },
+        {
+          accessorKey: "horario_inicial",
+          header: "Horário Inicial",
+          accessorFn: (e) => formatDate((e as Sessao).horario_inicial),
+        },
+        {
+          accessorKey: "horario_final",
+          header: "Horário Final",
+          accessorFn: (e) => formatDate((e as Sessao).horario_final),
+        },
+      ];
+    case "assentos":
+      return [
+        { accessorKey: "id", header: "ID" },
+        { accessorKey: "id_sala", header: "Sala ID" },
+        { accessorKey: "codigo", header: "Código" },
+        { accessorKey: "vip", header: "VIP" },
+        { accessorKey: "avaible", header: "DISPONIVEL" },
+      ];
+    default:
+      return [];
+  }
+}
 export default getColumns;
