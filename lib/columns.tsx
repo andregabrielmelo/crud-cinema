@@ -1,6 +1,7 @@
-import type { GenericData, TableName } from "@/lib/definitions";
+import type { GenericData, Sessao, TableName } from "@/lib/definitions";
 import { ColumnDef } from "@tanstack/react-table";
 import DataTableRowActions from "@/components/DataTableRowActions";
+import { formatDate } from "./utils";
 
 function getColumns(type: TableName): ColumnDef<GenericData>[] {
   switch (type) {
@@ -44,8 +45,16 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
         { accessorKey: "id", header: "ID" },
         { accessorKey: "id_sala", header: "Sala ID" },
         { accessorKey: "nome_do_filme", header: "Filme" },
-        { accessorKey: "horario_inicial", header: "Horário Inicial" },
-        { accessorKey: "horario_final", header: "Horário Final" },
+        {
+          accessorKey: "horario_inicial",
+          header: "Horário Inicial",
+          accessorFn: (e) => formatDate((e as Sessao).horario_inicial),
+        },
+        {
+          accessorKey: "horario_final",
+          header: "Horário Final",
+          accessorFn: (e) => formatDate((e as Sessao).horario_final),
+        },
         {
           id: "actions",
           header: "Ações",

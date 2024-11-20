@@ -66,6 +66,7 @@ export const TableDatContextProvider = ({
     setTableData((prev) => {
       const editedIndex = prev.findIndex((find) => find.id == item.id);
       prev[editedIndex] = item;
+
       return [...prev];
     });
   };

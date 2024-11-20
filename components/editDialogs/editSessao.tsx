@@ -22,7 +22,7 @@ export default function EditSessao() {
     editModal.data?.data as Sessao,
     editModal.setOpen,
     editModal.setData,
-    editModal.open
+    editModal.open,
   ];
   useEffect(() => {
     setData((prev) => {
@@ -47,8 +47,8 @@ export default function EditSessao() {
         {
           horario_final: formData.horario_final.getTime(),
           horario_inicial: formData.horario_inicial.getTime(),
-          id_sala : formData.id_sala,
-          nome_do_filme : formData.nome_do_filme
+          id_sala: parseInt((e as any).target[0].value),
+          nome_do_filme: (e as any).target[1].value,
         },
         {
           headers: {

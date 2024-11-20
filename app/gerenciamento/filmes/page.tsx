@@ -16,9 +16,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 import getColumns from "@/lib/columns";
 import type { GenericData, TableName } from "@/lib/definitions";
 import EditModal from "@/components/editDialogs/editModal";
+import { useTableData } from "@/lib/useTableData";
 
 export default function Home() {
-  const [data, setData] = useState<GenericData[]>([]);
+  const { data, setData } = useTableData();
   const columns = getColumns("sessoes");
 
   // Fetch data and update columns whenever the selected value changes
