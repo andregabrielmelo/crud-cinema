@@ -1,5 +1,5 @@
 import { Assento, Sala, Sessao } from "@/lib/definitions";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,21 +11,44 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import axios from "axios";
-import { useTableData } from "@/lib/useTableData";
-import { Checkbox } from "../ui/checkbox";
+import { editModalData, useTableData } from "@/lib/useTableData";
+import { TimePickerDemo } from "../ui/time-picker-demo";
+import { DateTimePicker } from "../ui/date-time-picker";
+import { sessoes } from "@prisma/client";
 
 export default function EditSessao() {
   const { editItem, editModal } = useTableData();
-  const [data, setOpen] = [editModal.data?.data as Sessao, editModal.setOpen];
+  const [data, setOpen, setData, open] = [
+    editModal.data?.data as Sessao,
+    editModal.setOpen,
+    editModal.setData,
+    editModal.open
+  ];
+  useEffect(() => {
+    setData((prev) => {
+      const data = prev?.data as Sessao;
+      data.horario_inicial = new Date(data.horario_inicial);
+      data.horario_final = new Date(data.horario_final);
+      return structuredClone(prev);
+    });
+  }, [open]);
+
   const onClose = () => setOpen(false);
+
   const confirmEdit = (e: FormEvent) => {
     e.preventDefault();
+    if (!editModal.data?.data) {
+      return;
+    }
+    const formData = editModal.data?.data as Sessao;
     axios
       .put(
-        "/api/assentos/",
+        "/api/sessoes/",
         {
-          codigo: (e as any).target[0].value,
-          vip: (e as any).target[1].getAttribute(["aria-checked"]) == "true",
+          horario_final: formData.horario_final.getTime(),
+          horario_inicial: formData.horario_inicial.getTime(),
+          id_sala : formData.id_sala,
+          nome_do_filme : formData.nome_do_filme
         },
         {
           headers: {
@@ -39,7 +62,6 @@ export default function EditSessao() {
       })
       .catch((e) => console.error(e));
   };
-  console.log(data);
   return (
     <DialogContent className="sm:max-w-[425px]">
       <DialogHeader>
@@ -63,13 +85,35 @@ export default function EditSessao() {
             <Label htmlFor="name" className="text-right">
               Inicio
             </Label>
-            <Input defaultValue={data.horario_inicial} className="col-span-3" />
+            <DateTimePicker
+              date={data.horario_inicial}
+              setDate={(newDate) =>
+                setData((prev) => {
+                  if (prev?.data) {
+                    const data: Sessao = prev.data as Sessao;
+                    data.horario_inicial = newDate;
+                  }
+                  return structuredClone(prev);
+                })
+              }
+            />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
               Fim
             </Label>
-            <Input defaultValue={data.horario_final} className="col-span-3" />
+            <DateTimePicker
+              date={data.horario_final}
+              setDate={(newDate) =>
+                setData((prev) => {
+                  if (prev?.data) {
+                    const data: Sessao = prev.data as Sessao;
+                    data.horario_final = newDate;
+                  }
+                  return structuredClone(prev);
+                })
+              }
+            />
           </div>
         </div>
         <DialogFooter>
