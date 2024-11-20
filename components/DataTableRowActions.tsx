@@ -15,12 +15,10 @@ import { useTableData } from "@/lib/useTableData";
 import { Dialog, DialogTrigger } from "./ui/dialog";
 import EditModal from "./editDialogs/editModal";
 
-const DataTableRowActions = (
-  props: any,
-  tableName: TableName,
-  onEdit: (type: TableName, data: GenericData) => void
-) => {
+const DataTableRowActions = (props: any, tableName: TableName) => {
   const { deleteItem: deleteTableitem } = useTableData();
+  const { editModal } = useTableData();
+
   const deleteItem = () => {
     const deletePromise = axios
       .delete(`/api/${tableName}`, {
@@ -41,7 +39,11 @@ const DataTableRowActions = (
   };
 
   const editItem = () => {
-    onEdit(tableName, props.row.original);
+    editModal.setData({
+      data: props.row.original,
+      tableName: tableName,
+    });
+    editModal.setOpen(true);
   };
   return (
     <DropdownMenu>

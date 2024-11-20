@@ -25,17 +25,21 @@ import {
 
 import type { ColumnDef } from "@tanstack/react-table";
 import getColumns from "@/lib/columns";
-import type { GenericData } from "@/lib/definitions";
+import type { GenericData, TableName } from "@/lib/definitions";
+import { Dialog } from "@/components/ui/dialog";
+import EditModal from "@/components/editDialogs/editModal";
+import { useTableData } from "@/lib/useTableData";
 
 export default function Home() {
-  const placeholder = "Ingressos";
-
-  const [selectedValue, setSelectedValue] = useState<string>(
-    placeholder.toLowerCase()
-  );
+  const [selectedValue, setSelectedValue] = useState<TableName>("assentos");
   const [data, setData] = useState<GenericData[]>([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogData, setDialogData] = useState<{
+    tableName: TableName;
+    data: GenericData;
+  }>();
   const [columns, setColumns] = useState<ColumnDef<GenericData>[]>(
-    getColumns(placeholder.toLowerCase())
+    getColumns("assentos")
   );
 
   // Fetch data and update columns whenever the selected value changes
@@ -90,6 +94,16 @@ export default function Home() {
         <div className="container mx-auto py-2">
           <DataTable columns={columns} data={data} />
         </div>
+
+        <Dialog open={dialogOpen} onOpenChange={() => setDialogOpen(false)}>
+          {dialogData && (
+            <EditModal
+              data={dialogData?.data}
+              tableName={dialogData?.tableName}
+              onClose={() => setDialogOpen(false)}
+            />
+          )}
+        </Dialog>
 
         <div className="container mx-auto py-2">
           {selectedValue === "ingressos" && <AddIngresso />}

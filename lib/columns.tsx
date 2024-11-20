@@ -2,10 +2,7 @@ import type { GenericData, TableName } from "@/lib/definitions";
 import { ColumnDef } from "@tanstack/react-table";
 import DataTableRowActions from "@/components/DataTableRowActions";
 
-function getColumns(
-  type: TableName,
-  onEdit: (type : TableName, data : GenericData) => void
-): ColumnDef<GenericData>[] {
+function getColumns(type: TableName): ColumnDef<GenericData>[] {
   switch (type) {
     case "salas":
       return [
@@ -16,7 +13,7 @@ function getColumns(
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type, onEdit),
+          cell: (props) => DataTableRowActions(props, type),
         },
       ];
     case "assentos":
@@ -28,7 +25,7 @@ function getColumns(
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type, onEdit),
+          cell: (props) => DataTableRowActions(props, type),
         },
       ];
     case "produtos":
@@ -39,7 +36,7 @@ function getColumns(
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type, onEdit),
+          cell: (props) => DataTableRowActions(props, type),
         },
       ];
     case "sessoes":
@@ -52,7 +49,7 @@ function getColumns(
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type, onEdit),
+          cell: (props) => DataTableRowActions(props, type),
         },
       ];
     case "ingressos":
@@ -65,7 +62,7 @@ function getColumns(
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type, onEdit),
+          cell: (props) => DataTableRowActions(props, type),
         },
       ];
     case "vendas":
@@ -77,7 +74,7 @@ function getColumns(
         {
           id: "actions",
           header: "Ações",
-          cell: (props) => DataTableRowActions(props, type, onEdit),
+          cell: (props) => DataTableRowActions(props, type),
         },
       ];
     default:

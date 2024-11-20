@@ -27,23 +27,16 @@ import {
 
 import type { ColumnDef } from "@tanstack/react-table";
 import type { GenericData, TableName } from "@/lib/definitions";
-import toast from "react-hot-toast";
 import { useTableData } from "@/lib/useTableData";
-import { Dialog, DialogOverlay } from "@radix-ui/react-dialog";
+import { Dialog } from "@radix-ui/react-dialog";
 import EditModal from "@/components/editDialogs/editModal";
 
 export default function Home() {
   const [selectedValue, setSelectedValue] = useState<TableName>("assentos");
-  const { data, setData } = useTableData();
+  const { data, setData, editModal } = useTableData();
   const [columns, setColumns] = useState<ColumnDef<GenericData>[]>(
-    getColumns("assentos", onEdit)
+    getColumns("assentos")
   );
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogData, setDialogData] = useState<{
-    tableName: TableName;
-    data: GenericData;
-  }>();
-
   // Fetch data and update columns whenever the selected value changes
   React.useEffect(() => {
     axios
@@ -52,14 +45,9 @@ export default function Home() {
       })
       .then((response) => {
         setData(response.data);
-        setColumns(getColumns(selectedValue, onEdit));
+        setColumns(getColumns(selectedValue));
       });
   }, [selectedValue]);
-
-  function onEdit(tableName: TableName, data: GenericData) {
-    setDialogData({ data, tableName });
-    setDialogOpen(true);
-  }
 
   return (
     <>
@@ -102,12 +90,15 @@ export default function Home() {
         <div className="container mx-auto py-2">
           <DataTable columns={columns} data={data} />
         </div>
-        <Dialog open={dialogOpen} onOpenChange={() => setDialogOpen(false)}>
-          {dialogData && (
+        <Dialog
+          open={editModal.open}
+          onOpenChange={() => editModal.setOpen(false)}
+        >
+          {editModal.data && (
             <EditModal
-              data={dialogData?.data}
-              tableName={dialogData?.tableName}
-              onClose={() => setDialogOpen(false)}
+              data={editModal?.data.data}
+              tableName={editModal?.data.tableName}
+              onClose={() => editModal.setOpen(false)}
             />
           )}
         </Dialog>
