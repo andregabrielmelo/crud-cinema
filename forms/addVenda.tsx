@@ -21,7 +21,7 @@ import { useTable } from "react-table";
 import { useTableData } from "@/lib/useTableData";
 
 const vendaSchema = z.object({
-  descricao: z.string().nonempty("Selecione um produto"),
+  nome: z.string().nonempty("Selecione um produto"),
   preco: z.coerce.number().min(0, "O preço deve ser maior que zero"),
   quantidade: z.coerce.number().min(0, "A quantidade deve ser maior que zero"),
 });
@@ -56,7 +56,7 @@ export default function AddCinema() {
     const produto = produtos.find((p) => p.id === produtoId);
     if (produto) {
       setSelectedProduto(produto);
-      setValue("descricao", produto.nome); // Update "descricao" in the form
+      setValue("nome", produto.nome); // Update "descricao" in the form
       setValue("preco", produto.preco); // Update "preco" in the form
     }
   }
