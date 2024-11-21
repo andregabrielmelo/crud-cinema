@@ -17,6 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTable } from "react-table";
+import { useTableData } from "@/lib/useTableData";
 
 const vendaSchema = z.object({
   descricao: z.string().nonempty("Selecione um produto"),
@@ -30,6 +32,7 @@ export default function AddCinema() {
   const { register, handleSubmit, setValue, watch } = useForm<VendaSchema>({
     resolver: zodResolver(vendaSchema),
   });
+  const { addItem } = useTableData();
 
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
@@ -37,7 +40,7 @@ export default function AddCinema() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("http://localhost:3000/api/produtos", {
+        const response = await axios.get("/api/produtos", {
           headers: { cursor: 0 },
         });
         setProdutos(response.data);
@@ -60,8 +63,8 @@ export default function AddCinema() {
 
   function addVenda(data: VendaSchema) {
     console.log("Submitting data:", data);
-    axios.post("http://localhost:3000/api/vendas", data).then((response) => {
-      console.log("Response:", response);
+    axios.post("/api/vendas", data).then((response) => {
+      addItem(response.data)
     });
   }
 

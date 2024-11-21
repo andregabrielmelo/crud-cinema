@@ -16,13 +16,14 @@ import {
 } from "@/components/ui/breadcrumb";
 
 import type { GenericData } from "@/lib/definitions";
+import { useTableData } from "@/lib/useTableData";
 
 export default function Home() {
-  const [data, setData] = useState<GenericData[]>([]);
+  const { data, setData } = useTableData();
 
   async function fetchData() {
     try {
-      const response = await axios.get("http://localhost:3000/api/vendas", {
+      const response = await axios.get("/api/vendas", {
         headers: { cursor: 0 },
       });
       setData(response.data);
