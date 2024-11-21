@@ -3,9 +3,9 @@ import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 type newProduct =
-    Prisma.$produtosPayload["scalars"] & {
-        quantidade?: number
-    }
+  Prisma.$produtosPayload["scalars"] & {
+    quantidade?: number
+  }
 
 
 export async function GET(request: NextRequest) {
@@ -48,37 +48,20 @@ export async function DELETE(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-    try {
-        const bodyData: newProduct = await request.json();
-        const newSale = await prisma.vendas.create({
-            data:
-            {
-                descricao: `Produto - ${bodyData.quantidade ?? 1} ${bodyData.nome}`,
-                preco: parseFloat(bodyData.preco.toString()) * (bodyData.quantidade ?? 1),
-                horario_venda: new Date()
-            }
-        })
+  try {
+    const bodyData: newProduct = await request.json();
+    const newSale = await prisma.vendas.create({
+      data:
+      {
+        descricao: `Produto - ${bodyData.quantidade ?? 1} ${bodyData.nome}`,
+        preco: parseFloat(bodyData.preco.toString()) * (bodyData.quantidade ?? 1),
+        horario_venda: new Date()
+      }
+    })
 
-        return new NextResponse(JSON.stringify(newSale), {
-            status: 200
-        })
-    } catch (e) {
-        return new NextResponse(JSON.stringify(e), {
-            status: 400
-        })
-    }
-
-    const newSales = await prisma.vendas.createMany({
-      data: bodyData.map((item) => ({
-        descricao: `Produto - ${item.quantidade ?? 1} ${item.descricao}`,
-        preco: parseFloat(item.preco.toString()) * (item.quantidade ?? 1),
-        horario_venda: new Date(),
-      })),
-    });
-
-    return new NextResponse(newSales.count.toString(), {
-      status: 200,
-    });
+    return new NextResponse(JSON.stringify(newSale), {
+      status: 200
+    })
   } catch (e) {
     return new NextResponse("Erro: " + JSON.stringify(e), {
       status: 400,
