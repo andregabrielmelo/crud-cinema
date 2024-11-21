@@ -2,11 +2,11 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-type productsList = Array<
-  Prisma.$produtosPayload["scalars"] & {
-    quantidade?: number;
-  }
->;
+type newProduct =
+    Prisma.$produtosPayload["scalars"] & {
+        quantidade?: number
+    }
+
 
 export async function GET(request: NextRequest) {
   const cursor = request.headers.get("cursor");
@@ -48,12 +48,24 @@ export async function DELETE(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    let bodyData: productsList = await request.json();
+    try {
+        const bodyData: newProduct = await request.json();
+        const newSale = await prisma.vendas.create({
+            data:
+            {
+                descricao: `Produto - ${bodyData.quantidade ?? 1} ${bodyData.nome}`,
+                preco: parseFloat(bodyData.preco.toString()) * (bodyData.quantidade ?? 1),
+                horario_venda: new Date()
+            }
+        })
 
-    // Garantir que bodyData seja sempre um array
-    if (!Array.isArray(bodyData)) {
-      bodyData = [bodyData];
+        return new NextResponse(JSON.stringify(newSale), {
+            status: 200
+        })
+    } catch (e) {
+        return new NextResponse(JSON.stringify(e), {
+            status: 400
+        })
     }
 
     const newSales = await prisma.vendas.createMany({
