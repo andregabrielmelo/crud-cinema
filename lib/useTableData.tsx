@@ -1,9 +1,21 @@
 "use client";
 
-import { createContext, ReactElement, useContext, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 import { GenericData, TableName } from "./definitions";
 
 export const useTableData = () => useContext(tableDataContext);
+
+export type editModalData = {
+  tableName: TableName;
+  data: GenericData;
+};
 type tableDataContextType = {
   data: GenericData[];
   deleteItem: (id: number) => void;
@@ -11,13 +23,10 @@ type tableDataContextType = {
   editItem: (item: GenericData) => void;
   setData: (newData: GenericData[]) => void;
   editModal: {
-    data?: {
-      tableName: TableName;
-      data: GenericData;
-    };
-    setData: (data: { tableName: TableName; data: GenericData }) => void;
+    data?: editModalData;
+    setData: Dispatch<SetStateAction<editModalData | undefined>>;
     open: boolean;
-    setOpen: (open: boolean) => void;
+    setOpen: Dispatch<SetStateAction<boolean>>;
   };
 };
 const tableDataContext = createContext<tableDataContextType>({
@@ -39,10 +48,7 @@ export const TableDatContextProvider = ({
   children: ReactElement;
 }) => {
   const [tableData, setTableData] = useState<GenericData[]>([]);
-  const [modalEditData, setModalEditData] = useState<{
-    tableName: TableName;
-    data: GenericData;
-  }>();
+  const [modalEditData, setModalEditData] = useState<editModalData>();
   const [openEditModal, setOpenEditModal] = useState(false);
 
   const deleteItem = (id: number) => {
@@ -60,6 +66,7 @@ export const TableDatContextProvider = ({
     setTableData((prev) => {
       const editedIndex = prev.findIndex((find) => find.id == item.id);
       prev[editedIndex] = item;
+
       return [...prev];
     });
   };

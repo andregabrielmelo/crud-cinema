@@ -10,6 +10,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+
+import { Skeleton } from "@/components/ui/skeleton";
+
+import EditModal from "@/components/editDialogs/editModal";
+
+import { Suspense } from "react";
 import { getAssentos } from "@/lib/db";
 
 export default async function Home() {
@@ -39,12 +45,17 @@ export default async function Home() {
           </Breadcrumb>
         </div>
         <div className="container mx-auto py-10">
-          <DataTable columns={columns} data={data} />
+          <Suspense
+            fallback={<Skeleton className="w-[100px] h-[20px] rounded-full" />}
+          >
+            <DataTable columns={columns} data={data} />
+          </Suspense>
         </div>
 
         <div className="container mx-auto py-2">
           <AddAssento />
         </div>
+        <EditModal />
       </section>
     </>
   );

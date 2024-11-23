@@ -12,6 +12,12 @@ export const columns: ColumnDef<Assento>[] = [
   {
     id: "actions",
     header: "Ações",
-    cell: (props) => <DataTableRowActions {...props} tableName={"assentos"} />,
+    cell: (props) => (
+      <DataTableRowActions
+        props={props}
+        menuOptions={{ edit: true, delete: true }}
+        tableName={"assentos"}
+      />
+    ),
   },
 ];

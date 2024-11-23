@@ -1,3 +1,4 @@
+// import EditModal from "@/components/editDialogs/editModal";
 import { DataTable } from "@/components/DataTable";
 import AddProduto from "./produtoForm";
 import { columns } from "./columns";
@@ -13,6 +14,7 @@ import {
 import { getProdutos } from "@/lib/db";
 
 export default async function Home() {
+  // const { editModal } = useTableData();
   const data = await getProdutos(0);
 
   return (
@@ -41,6 +43,8 @@ export default async function Home() {
         <div className="container mx-auto py-10">
           <DataTable columns={columns} data={data} />
         </div>
+
+        {/* <EditModal />  */}
 
         <div className="container mx-auto py-2">
           <AddProduto />

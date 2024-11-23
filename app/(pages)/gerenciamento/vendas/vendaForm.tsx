@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 
+import { useRouter } from "next/navigation";
+
 const vendaSchema = z.object({
   descricao: z.string(),
   preco: z.coerce.number(),
@@ -15,6 +17,8 @@ const vendaSchema = z.object({
 type VendaSchema = z.infer<typeof vendaSchema>;
 
 export default function AddVenda() {
+  const router = useRouter();
+
   const { register, handleSubmit } = useForm<VendaSchema>({
     resolver: zodResolver(vendaSchema),
   });
@@ -23,6 +27,7 @@ export default function AddVenda() {
     axios.post("http://localhost:3000/api/vendas", data).then((response) => {
       console.log(response);
     });
+    router.refresh();
   }
 
   return (

@@ -10,9 +10,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { getVendas } from "@/lib/db";
 
-export default async function Home() {
+import { Skeleton } from "@/components/ui/skeleton";
+
+import { getVendas } from "@/lib/db";
+import { Suspense } from "react";
+
+export default async function Page() {
   const data = await getVendas(0);
 
   return (
@@ -39,7 +43,11 @@ export default async function Home() {
           </Breadcrumb>
         </div>
         <div className="container mx-auto py-10">
-          <DataTable columns={columns} data={data} />
+          <Suspense
+            fallback={<Skeleton className="w-[100px] h-[20px] rounded-full" />}
+          >
+            <DataTable columns={columns} data={data} />
+          </Suspense>
         </div>
 
         <div className="container mx-auto py-2">

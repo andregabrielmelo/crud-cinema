@@ -8,46 +8,40 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TableName } from "@/lib/definitions";
+import { GenericData, TableName } from "@/lib/definitions";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useTableData } from "@/lib/useTableData";
+import { Dialog, DialogTrigger } from "./ui/dialog";
+import EditModal from "./editDialogs/editModal";
 
 type dropMenuOptions = {
   edit: boolean;
   delete: boolean;
 };
 
-type DataTableRowActionsProps = {
-  row: any; // Replace `any` with the proper type for your row data
-  tableName: TableName;
-  menuOption?: dropMenuOptions;
-};
-
-const DataTableRowActions: React.FC<DataTableRowActionsProps> = ({
-  row,
-  tableName,
-  menuOption = { delete: true, edit: true },
-}) => {
+const DataTableRowActions = (
+  props: any,
+  tableName: TableName,
+  menuOption: dropMenuOptions = {
+    delete: true,
+    edit: true,
+  }
+) => {
   const { deleteItem: deleteTableitem } = useTableData();
   const { editModal } = useTableData();
 
   const deleteItem = () => {
-    console.log("Tabela: ", tableName);
-    console.log(row.original.id);
     const deletePromise = axios
       .delete(`/api/${tableName}`, {
         headers: {
-          id: row.original.id,
+          id: props.row.original.id,
         },
       })
       .then(() => {
-        deleteTableitem(row.original.id);
+        deleteTableitem(props.row.original.id);
       })
-      .catch((error) => {
-        console.error("Delete Error:", error.response?.data || error.message);
-        console.log("Error: ", error);
-      });
+      .catch((e) => console.error(e));
 
     toast.promise(deletePromise, {
       error: "Erro ao excluir o registro",
@@ -57,14 +51,13 @@ const DataTableRowActions: React.FC<DataTableRowActionsProps> = ({
   };
 
   const editItem = () => {
-    console.log("Setting edit modal data:", row.original, tableName);
+    console.log(props.props.row.original);
     editModal.setData({
-      data: row.original,
+      data: props.props.row.original,
       tableName: tableName,
     });
     editModal.setOpen(true);
   };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

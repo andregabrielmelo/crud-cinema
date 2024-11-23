@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 
+import { useRouter } from "next/navigation";
+
 const assentoSchema = z.object({
   id_sala: z.coerce.number(),
   codigo: z.string(),
@@ -16,6 +18,8 @@ const assentoSchema = z.object({
 type AssentoSchema = z.infer<typeof assentoSchema>;
 
 export default function AddAssento() {
+  const router = useRouter();
+
   const { register, handleSubmit } = useForm<AssentoSchema>({
     resolver: zodResolver(assentoSchema),
   });
@@ -24,6 +28,7 @@ export default function AddAssento() {
     axios.post("http://localhost:3000/api/assentos", data).then((response) => {
       console.log(response);
     });
+    router.refresh();
   }
 
   return (
