@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { DeleteTicket } from "@api/ingressos/route";
+import { DeleteTicket } from "../ingressos/route";
 
 type avaibleSeat = {
   id: number;
