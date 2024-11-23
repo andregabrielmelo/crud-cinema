@@ -2,11 +2,9 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-type newProduct =
-  Prisma.$produtosPayload["scalars"] & {
-    quantidade?: number
-  }
-
+type newProduct = Prisma.$produtosPayload["scalars"] & {
+  quantidade?: number;
+};
 
 export async function GET(request: NextRequest) {
   const cursor = request.headers.get("cursor");
@@ -15,6 +13,7 @@ export async function GET(request: NextRequest) {
       status: 400,
     });
   }
+  // SELECT * FROM vendas LIMIT cursor * 20, 20;
   const vendas = await prisma.vendas.findMany({
     skip: parseInt(cursor) * 20,
     take: 20,
@@ -32,6 +31,7 @@ export async function DELETE(request: NextRequest) {
     });
   }
   try {
+    // DELETE FROM vendas WHERE id = itemID;
     await prisma.vendas.delete({
       where: {
         id: parseInt(itemID),
@@ -50,18 +50,19 @@ export async function DELETE(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const bodyData: newProduct = await request.json();
+    // INSERT INTO vendas (descricao, preco, horario_venda) VALUES (bodyData.descricao, bodyData.preco, new Date());
     const newSale = await prisma.vendas.create({
-      data:
-      {
+      data: {
         descricao: `Produto - ${bodyData.quantidade ?? 1} ${bodyData.nome}`,
-        preco: parseFloat(bodyData.preco.toString()) * (bodyData.quantidade ?? 1),
-        horario_venda: new Date()
-      }
-    })
+        preco:
+          parseFloat(bodyData.preco.toString()) * (bodyData.quantidade ?? 1),
+        horario_venda: new Date(),
+      },
+    });
 
     return new NextResponse(JSON.stringify(newSale), {
-      status: 200
-    })
+      status: 200,
+    });
   } catch (e) {
     return new NextResponse("Erro: " + JSON.stringify(e), {
       status: 400,
