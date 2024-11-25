@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
           id: parseInt(sessionID),
         },
       });
-      // SELECT * FROM assentos WHERE id_sala = session.id_sala;
+      // SELECT * FROM assentos WHERE id_sala = session.id_sala LIMIT 1;
       const seats: avaibleSeat = await prisma.assentos.findMany({
         where: {
           id_sala: session?.id_sala,

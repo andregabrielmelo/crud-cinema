@@ -11,7 +11,8 @@ export async function GET(request: NextRequest) {
       status: 400,
     });
   }
-  // SELECT * FROM sessoes WHERE nome_do_filme LIKE movie LIMIT cursor * 20, 20;
+  // SELECT * FROM sessoes WHERE nome_do_filme LIKE "%movie%" LIMIT cursor * 20, 20;
+  // Teste: SELECT * FROM sessoes WHERE nome_do_filme LIKE "%movie%" LIMIT 0, 20;
   const sessoes = await prisma.sessoes.findMany({
     skip: parseInt(cursor) * 20,
     take: 20,
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
       throw "A sessão deve ser iniciada no futuro";
     }
     // SELECT COUNT(*) FROM salas WHERE id = bodyData.id_sala;
+    // Teste: SELECT COUNT(*) FROM salas WHERE id = 1;
     const salaExists = await prisma.salas.count({
       where: {
         id: bodyData.id_sala,
@@ -63,6 +65,11 @@ export async function POST(request: NextRequest) {
 
     // INSERT INTO sessoes (nome_do_filme, horario_inicial, horario_final, id_sala)
     // VALUES (bodyData.nome_do_filme, bodyData.horario_inicial, bodyData.horario_final, bodyData.id_sala);
+
+    // Teste:
+    // INSERT INTO sessoes (nome_do_filme, horario_inicial, horario_final, id_sala)
+    // VALUES ("teste", '2024-11-24 11:00:00', '2024-11-24 12:00:00', 1);
+
     const newSession = await prisma.sessoes.create({
       data: bodyData,
     });
@@ -88,7 +95,13 @@ export async function DELETE(request: NextRequest) {
     // SELECT s.*
     // FROM sessoes s
     // JOIN ingressos i ON s.id = i.id_sessao
-    // WHERE id = itemID;
+    // WHERE s.id = itemID;
+
+    // Teste:
+    // SELECT s.*
+    // FROM sessoes s
+    // JOIN ingressos i ON s.id = i.id_sessao
+    // WHERE s.id = 1;
     const session = await prisma.sessoes.findFirst({
       where: {
         id: parseInt(itemID),
@@ -103,6 +116,9 @@ export async function DELETE(request: NextRequest) {
       });
     }
     // DELETE FROM sessoes WHERE id = itemID;
+    // Teste: DELETE FROM sessoes WHERE id = 1;
+    // Cannot delete or update a parent row: a foreign key constraint fails (`cinema`.`ingressos`,
+    // CONSTRAINT `ingressos_ibfk_1` FOREIGN KEY (`id_sessao`) REFERENCES `sessoes` (`id`))
     await prisma.sessoes.delete({
       where: {
         id: parseInt(itemID),
@@ -126,6 +142,7 @@ export async function PUT(request: NextRequest) {
       throw "id é obrigatório";
     } else if (
       // SELECT COUNT(*) FROM sessoes WHERE id = itemID;
+      // Teste: SELECT COUNT(*) FROM sessoes WHERE id = 1;
       !(await prisma.sessoes.count({ where: { id: parseInt(itemID) } }))
     ) {
       throw "sessão não existente";
@@ -148,6 +165,15 @@ export async function PUT(request: NextRequest) {
     // horario_inicial = bodyData.horario_inicial,
     // horario_final = bodyData.horario_final,
     // id_sala = bodyData.id_sala WHERE id = itemID;
+
+    // Teste:
+    // UPDATE sessoes
+    // SET nome_do_filme = "teste",
+    //     horario_inicial = '2024-11-24 11:00:00',
+    //     horario_final = '2024-11-24 12:00:00',
+    //     id_sala = 1
+    // WHERE id = 1;
+
     const editedItem = await prisma.sessoes.update({
       data: bodyData,
       where: {
@@ -186,6 +212,20 @@ async function checkRoomavailability(
   //   )
   //   -- Optional exclusion: `id` != `id_sessao`
   //   AND (? IS NULL OR id != ?);
+
+  // Teste:
+  // SELECT COUNT(*) AS count
+  // FROM sessoes
+  // WHERE id_sala = 1
+  //   AND (
+  //         -- Condition 1
+  //         (horario_inicial <= '2024-11-24 11:30:00' AND horario_final >= '2024-11-24 11:30:00')
+  //         -- Condition 2
+  //         OR (horario_inicial <= '2024-11-24 12:30:00' AND horario_final >= '2024-11-24 12:30:00')
+  //         -- Condition 3
+  //         OR (horario_inicial >= '2024-11-24 11:30:00' AND horario_inicial <= '2024-11-24 12:30:00')
+  //       );
+
   return await prisma.sessoes.count({
     where: {
       id_sala: id_sala,

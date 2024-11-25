@@ -9,7 +9,8 @@ export async function GET(request: NextRequest) {
       status: 400,
     });
   }
-  // SELECT * FROM produtos LIMIT cursor * 20, 20
+  // SELECT * FROM produtos LIMIT cursor * 20, 20;
+  // Teste: SELECT * FROM produtos LIMIT 0, 20;
   const produtos = await prisma.produtos.findMany({
     skip: parseInt(cursor) * 20,
     take: 20,
@@ -27,7 +28,8 @@ export async function DELETE(request: NextRequest) {
     });
   }
   try {
-    // DELETE FROM produtos WHERE id = itemID
+    // DELETE FROM produtos WHERE id = itemID;
+    // Teste: DELETE FROM produtos WHERE id = 1;
     await prisma.produtos.delete({
       where: {
         id: parseInt(itemID),
@@ -48,6 +50,7 @@ export async function POST(request: NextRequest) {
     const bodyData: Prisma.$produtosPayload["scalars"] = await request.json();
     if (
       // SELECT COUNT(*) FROM produtos WHERE nome = bodyData.nome;
+      // Teste: SELECT COUNT(*) FROM produtos WHERE nome = "Candy";
       await prisma.produtos.count({
         where: {
           nome: bodyData.nome,
@@ -56,7 +59,8 @@ export async function POST(request: NextRequest) {
     ) {
       throw "Este produto ja está listado";
     }
-    // INSERT INTO produtos (nome, produto) VALUES (bodyData.nome, bodyData.produto)
+    // INSERT INTO produtos (nome, preco) VALUES (bodyData.nome, bodyData.preco)
+    // Teste: INSERT INTO produtos (nome, preco) VALUES ("Bala", 3);
     const newSeat = await prisma.produtos.create({
       data: bodyData,
     });
@@ -81,6 +85,7 @@ export async function PUT(request: NextRequest) {
       });
     }
     // UPDATE produtos SET nome = bodyData.nome, produto = bodyData.produto WHERE id = itemID;
+    // Teste: UPDATE produtos SET nome = "Balita", preco = 5 WHERE id = 7;
     const editedItem = await prisma.produtos.update({
       data: bodyData,
       where: {

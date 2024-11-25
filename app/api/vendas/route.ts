@@ -50,6 +50,7 @@ export async function DELETE(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const bodyData: newProduct = await request.json();
+    // New Date() é como o NOW() do SQL
     // INSERT INTO vendas (descricao, preco, horario_venda) VALUES (bodyData.descricao, bodyData.preco, new Date());
     const newSale = await prisma.vendas.create({
       data: {
