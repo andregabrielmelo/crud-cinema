@@ -39,6 +39,10 @@ export async function POST(request: NextRequest) {
         salas: true,
       },
     });
+
+    // SELECT a.* from assentos a
+    // JOIN salas sa ON a.id_sala = sa.id
+    // WHERE a.id = bodyData.id_assento
     const seatRegister = await prisma.assentos.findFirst({
       where: { id: bodyData.id_assento },
       include: {
@@ -52,6 +56,10 @@ export async function POST(request: NextRequest) {
       throw "Esse assento não pode ser reservado nesta sessão";
     }
     if (
+
+      // SELECT count(*) from ingressos
+      // where id_sessao = bodyData.id_sessao and
+      //  id_assento = bodyData.id_assento;
       await prisma.ingressos.count({
         where: {
           id_sessao: bodyData.id_sessao,
@@ -65,10 +73,14 @@ export async function POST(request: NextRequest) {
     bodyData.horario_venda = new Date();
     bodyData.preco = new Prisma.Decimal(seatRegister.vip ? 70 : 40);
 
+    //  INSERT INTO ingressos (id_sessao, id_assento, preco, horario_venda) VALUES
+    //  (bodyData.id_sessao, bodyData.id_assento, bodyData.preco, now())
     const newTicket = await prisma.ingressos.create({
       data: bodyData,
     });
 
+    // INSERT INTO vendas (preco, descricao, horario_venda) VALUES
+    //  (bodyData.preco, CONCAT('Venda de ingresso - ',sessionRegister.nome_do_filme,' - Assento ', seatRegister.codigo,', Bloco ',seatRegister.salas.bloco,' Sala ',seatRegister.salas.numero,' Sessão ', sessionRegister.id), now())
     await prisma.vendas.create({
       data: {
         horario_venda: bodyData.horario_venda,
@@ -88,6 +100,12 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DeleteTicket(itemID: number) {
+  // SELECT * from ingressos i
+  // JOIN assentos a ON i.id_assento = a.id
+  // JOIN salas sa on a.id_sala = sa.id
+  // JOIN sessoes s on i.id_sessao = s.id
+  // WHERE i.id = itemID
+  // LIMIT 1; 
   const ticketData = await prisma.ingressos.findFirst({
     where: { id: itemID },
     include: {
@@ -103,14 +121,20 @@ export async function DeleteTicket(itemID: number) {
     throw "Ingresso não existe";
   }
 
+
+  // INSERT INTO vendas (preco, descricao, horario_venda) VALUES
+  //  (bodyData.preco * -1, CONCAT('Reembolso de ingresso - ',ticketData.sessoes.nome_do_filme,' - Assento ', ticketData.sessoes.codigo,', Bloco ',ticketData.sessoes.salas.bloco,' Sala ',ticketData.sessoes.salas.numero,' Sessão ', ticketData.sessoes.id), now())
   await prisma.vendas.create({
     data: {
       horario_venda: new Date(),
       preco: (ticketData.preco?.toNumber() ?? 0) * -1,
-      descricao: `Reembolso de ingresso - ${ticketData.sessoes.nome_do_filme} - Assento ${ticketData.assentos.codigo}, Bloco ${ticketData.assentos.salas.bloco} Sala ${ticketData.assentos.salas.bloco}, Sessão ${ticketData.sessoes.id}`,
+      descricao: `Reembolso de ingresso - ${ticketData.sessoes.nome_do_filme} - Assento ${ticketData.assentos.codigo}, Bloco ${ticketData.assentos.salas.bloco} Sala ${ticketData.assentos.salas.numero}, Sessão ${ticketData.sessoes.id}`,
     },
   });
 
+
+  // DELETE from ingressos
+  // WHERE id = itemID;
   await prisma.ingressos.delete({
     where: {
       id: itemID,

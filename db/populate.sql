@@ -1,4 +1,6 @@
 -- Create 'salas' table
+USE cinema;
+
 INSERT INTO salas (bloco, numero, total_de_assentos) 
 VALUES 
 ('A', 1, 100),
