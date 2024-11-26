@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 export default function Home() {
@@ -16,6 +17,25 @@ export default function Home() {
           Além disso, você pode visualizar os produtos e os ingressos vendidos.
           <br />É um CRUD básico para gerenciamento do cinema.
         </p>
+      </section>
+      <section>
+        <div className="flex container items-center font-bold text-2xl gap-5 mx-auto py-10">
+          <Link href={"/ingressos"}>
+            <span className="hover:opacity-80 hover:underline">
+              Ingressos
+            </span>
+          </Link>
+          <Link href={"/vendas"}>
+            <span className="hover:opacity-80 hover:underline">
+              Vendas
+            </span>
+          </Link>
+          <Link href={"/gerenciamento"}>
+            <span className="hover:opacity-80 hover:underline">
+              Gerenciamento
+            </span>
+          </Link>
+        </div>
       </section>
     </>
   );
