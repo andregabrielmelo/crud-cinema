@@ -41,8 +41,8 @@ export async function GET(request: NextRequest) {
         },
       });
       // SELECT i.*, a.* FROM ingressos i
-      // LEFT JOIN assentos a ON i.id_assento = 1
-      // WHERE i.id_sessao = 1;
+      // LEFT JOIN assentos a ON i.id_assento = a.id
+      // WHERE i.id_sessao = session.id;
       const selledTickets = await prisma.ingressos.findMany({
         where: {
           id_sessao: session?.id,
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DeleteSeat(itemID: number) {
-  // DELETE FROM ingressos WHERE id_assento = itemID;
+  // DELETE FROM assentos WHERE id = itemID;
   await prisma.assentos.delete({
     where: {
       id: itemID,
@@ -128,7 +128,7 @@ export async function DeleteSeat(itemID: number) {
   });
   // SELECT i.* FROM ingressos i
   // JOIN sessoes s ON i.id_sessao = s.id
-  // WHERE i.id_assento = 1 AND s.horario_inicial >= NOW();
+  // WHERE i.id_assento = itemID AND s.horario_inicial >= NOW();
   const tickets = await prisma.ingressos.findMany({
     where: {
       id_assento: itemID,

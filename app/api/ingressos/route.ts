@@ -10,6 +10,8 @@ export async function GET(request: NextRequest) {
       status: 400,
     });
   }
+  // Realiza uma query diferente baseando-se se a requisição possui o id da sessão ou nao
+  // SELECT * FROM ingressos LIMIT cursor * 20, 20;
   // SELECT * FROM ingressos WHERE id_sessao = sessionID LIMIT cursor * 20, 20;
   const ingressos = await prisma.ingressos.findMany({
     skip: parseInt(cursor) * 20,
@@ -33,6 +35,8 @@ export async function POST(request: NextRequest) {
     const bodyData: Prisma.$ingressosPayload["scalars"] = await request.json();
     // SELECT s.* FROM sessoes s
     // JOIN salas sa ON s.sala_id = sa.id
+    // WHERE s.id = bodyData.id_sessao
+    // LIMIT 1;
     const sessionRegister = await prisma.sessoes.findFirst({
       where: { id: bodyData.id_sessao },
       include: {
