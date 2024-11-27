@@ -46,10 +46,7 @@ export async function DELETE(request: NextRequest) {
         id_sala: parseInt(itemID),
       },
     });
-    // DELETE FROM assentos WHERE id_sala = itemID;
-    // Teste: DELETE FROM assentos WHERE id_sala = 1;
-    // Cannot delete or update a parent row: a foreign key constraint fails
-    // (`cinema`.`ingressos`, CONSTRAINT `ingressos_ibfk_2` FOREIGN KEY (`id_assento`) REFERENCES `assentos` (`id`))
+
     seats.forEach(async (item) => await DeleteSeat(item.id));
     // DELETE FROM salas WHERE id = itemID;
     // Teste: DELETE FROM salas WHERE id = 1;

@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatDate(date: Date) {
+export function formatDate(date: Date | string) {
   date = new Date(date)
   const meses = [
     "Janeiro",

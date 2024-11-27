@@ -88,7 +88,7 @@ function getColumns(type: TableName): ColumnDef<GenericData>[] {
           id: "actions",
           header: "Ações",
           cell: (props) =>
-            DataTableRowActions(props, type, { edit: false, delete: false }),
+            DataTableRowActions(props, type, { edit: false, delete: true }),
         },
       ];
     default:

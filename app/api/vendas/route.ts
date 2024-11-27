@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
   try {
     const bodyData: newProduct = await request.json();
     // New Date() é como o NOW() do SQL
-    // INSERT INTO vendas (descricao, preco, horario_venda) VALUES (bodyData.descricao, bodyData.preco, new Date());
+    // INSERT INTO vendas (descricao, preco, horario_venda) VALUES (bodyData.descricao, bodyData.preco, NOW());
     const newSale = await prisma.vendas.create({
       data: {
         descricao: `Produto - ${bodyData.quantidade ?? 1} ${bodyData.nome}`,
