@@ -24,15 +24,9 @@ export default function ComprarIngresso() {
   const router = useRouter();
 
   useEffect(() => {
-    axios
-      .get("/api/sessoes", {
-        headers: {
-          cursor: 0,
-        },
-      })
-      .then((res) => {
-        setData(res.data);
-      });
+    axios.get("/api/sessoes").then((res) => {
+      setData(res.data);
+    });
   }, []);
 
   function onClick(row: Sessao | Assento) {
@@ -41,7 +35,6 @@ export default function ComprarIngresso() {
       axios
         .get("/api/assentos", {
           headers: {
-            cursor: 0,
             sessao: row.id,
           },
         })

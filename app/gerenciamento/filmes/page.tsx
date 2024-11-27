@@ -25,13 +25,9 @@ export default function Home() {
 
   // Fetch data and update columns whenever the selected value changes
   React.useEffect(() => {
-    axios
-      .get("/api/sessoes", {
-        headers: { cursor: 0 },
-      })
-      .then((response) => {
-        setData(response.data);
-      });
+    axios.get("/api/sessoes").then((response) => {
+      setData(response.data);
+    });
   }, []);
 
   return (

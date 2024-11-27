@@ -4,18 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { DeleteSeat } from "../assentos/route";
 
 export async function GET(request: NextRequest) {
-  const cursor = request.headers.get("cursor");
-  if (!cursor) {
-    return new NextResponse("cursor é obrigatório", {
-      status: 400,
-    });
-  }
-  // SELECT * FROM salas LIMIT cursor * 20, 20;
-  // Teste: SELECT * FROM salas LIMIT 0, 20;
-  const salas = await prisma.salas.findMany({
-    skip: parseInt(cursor) * 20,
-    take: 20,
-  });
+  // SELECT * FROM salas;
+  const salas = await prisma.salas.findMany();
   return new NextResponse(JSON.stringify(salas), {
     status: 200,
   });

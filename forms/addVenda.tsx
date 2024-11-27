@@ -40,9 +40,7 @@ export default function AddCinema() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("/api/produtos", {
-          headers: { cursor: 0 },
-        });
+        const response = await axios.get("/api/produtos");
         setProdutos(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -64,7 +62,7 @@ export default function AddCinema() {
   function addVenda(data: VendaSchema) {
     console.log("Submitting data:", data);
     axios.post("/api/vendas", data).then((response) => {
-      addItem(response.data)
+      addItem(response.data);
     });
   }
 

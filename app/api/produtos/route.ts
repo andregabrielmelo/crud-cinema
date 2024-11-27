@@ -3,18 +3,9 @@ import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const cursor = request.headers.get("cursor");
-  if (!cursor) {
-    return new NextResponse("cursor é obrigatório", {
-      status: 400,
-    });
-  }
-  // SELECT * FROM produtos LIMIT cursor * 20, 20;
-  // Teste: SELECT * FROM produtos LIMIT 0, 20;
-  const produtos = await prisma.produtos.findMany({
-    skip: parseInt(cursor) * 20,
-    take: 20,
-  });
+  // SELECT * FROM produtos;
+  // Teste: SELECT * FROM produtos;
+  const produtos = await prisma.produtos.findMany();
   return new NextResponse(JSON.stringify(produtos), {
     status: 200,
   });

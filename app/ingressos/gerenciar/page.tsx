@@ -25,13 +25,9 @@ export default function Home() {
 
   // Fetch data and update columns whenever the selected value changes
   React.useEffect(() => {
-    axios
-      .get("/api/ingressos", {
-        headers: { cursor: 0 },
-      })
-      .then((response) => {
-        setData(response.data);
-      });
+    axios.get("/api/ingressos").then((response) => {
+      setData(response.data);
+    });
   }, []);
 
   return (
@@ -47,9 +43,7 @@ export default function Home() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink href="/ingressos">
-                  Ingressos
-                </BreadcrumbLink>
+                <BreadcrumbLink href="/ingressos">Ingressos</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>

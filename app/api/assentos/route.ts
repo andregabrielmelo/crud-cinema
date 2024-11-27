@@ -12,18 +12,9 @@ type avaibleSeat = {
 }[];
 
 export async function GET(request: NextRequest) {
-  // Pega o cursor da requisição
-  const cursor = request.headers.get("cursor");
 
   // Pega o id da sessão da requisição
   const sessionID = request.headers.get("sessao");
-
-  // Se não tiver cursor, retorna erro
-  if (!cursor) {
-    return new NextResponse("cursor é obrigatório", {
-      status: 400,
-    });
-  }
 
   // Se tiver id da sessão, retorna os assentos disponíveis naquela sessão
   if (sessionID) {
@@ -69,12 +60,8 @@ export async function GET(request: NextRequest) {
   }
 
   // Se não tiver id da sessão, retorna todos os assentos
-  // Pula os (20 * cursor) primeiros assentos e pega os próximos 20
-  // SELECT * FROM assentos LIMIT cursor, 20;
-  const assentos = await prisma.assentos.findMany({
-    skip: parseInt(cursor) * 20,
-    take: 20,
-  });
+  // SELECT * FROM assentos;
+  const assentos = await prisma.assentos.findMany();
   return new NextResponse(JSON.stringify(assentos), {
     status: 200,
   });

@@ -4,18 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { DeleteTicket } from "../ingressos/route";
 
 export async function GET(request: NextRequest) {
-  const cursor = request.headers.get("cursor");
   const movie = request.headers.get("movie");
-  if (!cursor) {
-    return new NextResponse("cursor é obrigatório", {
-      status: 400,
-    });
-  }
-  // SELECT * FROM sessoes WHERE nome_do_filme LIKE "%movie%" LIMIT cursor * 20, 20;
-  // Teste: SELECT * FROM sessoes WHERE nome_do_filme LIKE "%movie%" LIMIT 0, 20;
+  // SELECT * FROM sessoes WHERE nome_do_filme LIKE "%movie%";
+  // Teste: SELECT * FROM sessoes WHERE nome_do_filme LIKE "%movie%";
   const sessoes = await prisma.sessoes.findMany({
-    skip: parseInt(cursor) * 20,
-    take: 20,
     ...(movie
       ? {
           where: {

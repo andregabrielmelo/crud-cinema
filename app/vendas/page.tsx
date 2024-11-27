@@ -23,9 +23,7 @@ export default function Home() {
 
   async function fetchData() {
     try {
-      const response = await axios.get("/api/vendas", {
-        headers: { cursor: 0 },
-      });
+      const response = await axios.get("/api/vendas");
       setData(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);

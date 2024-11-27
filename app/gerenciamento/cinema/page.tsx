@@ -40,9 +40,7 @@ export default function Home() {
   // Fetch data and update columns whenever the selected value changes
   React.useEffect(() => {
     axios
-      .get("/api/" + selectedValue, {
-        headers: { cursor: 0 },
-      })
+      .get("/api/" + selectedValue)
       .then((response) => {
         setData(response.data);
         setColumns(getColumns(selectedValue));

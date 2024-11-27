@@ -7,17 +7,8 @@ type newProduct = Prisma.$produtosPayload["scalars"] & {
 };
 
 export async function GET(request: NextRequest) {
-  const cursor = request.headers.get("cursor");
-  if (!cursor) {
-    return new NextResponse("cursor é obrigatório", {
-      status: 400,
-    });
-  }
-  // SELECT * FROM vendas LIMIT cursor * 20, 20;
-  const vendas = await prisma.vendas.findMany({
-    skip: parseInt(cursor) * 20,
-    take: 20,
-  });
+  // SELECT * FROM vendas;
+  const vendas = await prisma.vendas.findMany({});
   return new NextResponse(JSON.stringify(vendas), {
     status: 200,
   });

@@ -3,20 +3,11 @@ import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const cursor = request.headers.get("cursor");
   const sessionID = request.headers.get("sessao");
-  if (!cursor) {
-    return new NextResponse("cursor é obrigatório", {
-      status: 400,
-    });
-  }
   // Realiza uma query diferente baseando-se se a requisição possui o id da sessão ou nao
-  // SELECT * FROM ingressos LIMIT cursor * 20, 20;
-  // SELECT * FROM ingressos WHERE id_sessao = sessionID LIMIT cursor * 20, 20;
+  // SELECT * FROM ingressos;
+  // SELECT * FROM ingressos WHERE id_sessao = sessionID;
   const ingressos = await prisma.ingressos.findMany({
-    skip: parseInt(cursor) * 20,
-    take: 20,
-
     ...(sessionID
       ? {
           where: {
