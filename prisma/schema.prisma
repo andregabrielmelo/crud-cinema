@@ -8,7 +8,7 @@ generator client {
 }
 
 model assentos {
-  id        Int         @id @default(autoincrement())
+  id        Int         @id @default(autoincrement()) @unique
   id_sala   Int
   codigo    String      @db.VarChar(5)
   vip       Boolean
@@ -19,7 +19,7 @@ model assentos {
 }
 
 model ingressos {
-  id            Int      @id @default(autoincrement())
+  id            Int      @id @default(autoincrement()) @unique
   id_sessao     Int
   id_assento    Int
   preco         Decimal? @db.Decimal(5, 2)
@@ -32,13 +32,13 @@ model ingressos {
 }
 
 model produtos {
-  id    Int     @id @default(autoincrement())
+  id    Int     @id @default(autoincrement()) @unique
   nome  String  @db.VarChar(50)
   preco Decimal @db.Decimal(5, 2)
 }
 
 model salas {
-  id                Int        @id @default(autoincrement())
+  id                Int        @id @default(autoincrement()) @unique
   bloco             String     @db.Char(1)
   numero            Int
   total_de_assentos Int
@@ -47,7 +47,7 @@ model salas {
 }
 
 model sessoes {
-  id              Int         @id @default(autoincrement())
+  id              Int         @id @default(autoincrement()) @unique
   id_sala         Int
   nome_do_filme   String?     @db.VarChar(20)
   horario_inicial DateTime    @db.Timestamp(0)
@@ -59,7 +59,7 @@ model sessoes {
 }
 
 model vendas {
-  id            Int      @id @default(autoincrement())
+  id            Int      @id @default(autoincrement()) @unique
   descricao     String   @db.VarChar(50)
   preco         Decimal  @db.Decimal(5, 2)
   horario_venda DateTime @db.Timestamp(0)

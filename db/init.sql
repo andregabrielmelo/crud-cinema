@@ -62,3 +62,5 @@ CREATE TABLE vendas (
      horario_venda TIMESTAMP(0) NOT NULL
 );
 
+-- Preenchendo o banco de dados
+source /docker-entrypoint-initdb.d/populate.sql;
