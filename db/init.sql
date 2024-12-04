@@ -12,14 +12,14 @@ CREATE DATABASE cinema;
 use cinema;
 
 CREATE TABLE salas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY UNIQUE ,
     bloco CHAR(1) NOT NULL,
     numero INT NOT NULL,
     total_de_assentos INT NOT NULL
 );
 
 CREATE TABLE assentos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY UNIQUE,
     id_sala INT NOT NULL,
     codigo VARCHAR(5) NOT NULL,
     vip BOOLEAN NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE assentos (
 );
 
 CREATE TABLE sessoes (
-   id INT AUTO_INCREMENT PRIMARY KEY,
+   id INT AUTO_INCREMENT PRIMARY KEY UNIQUE,
    id_sala INT NOT NULL,
    nome_do_filme VARCHAR(20),
    horario_inicial TIMESTAMP(0) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE sessoes (
 );
 
 CREATE TABLE ingressos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY UNIQUE,
     id_sessao INT NOT NULL,
     id_assento INT NOT NULL,
     preco DECIMAL(5, 2),
@@ -50,14 +50,14 @@ CREATE TABLE ingressos (
 );
 
 CREATE TABLE produtos (
-     id INT AUTO_INCREMENT PRIMARY KEY,
+     id INT AUTO_INCREMENT PRIMARY KEY UNIQUE,
      nome VARCHAR(50) NOT NULL,
      preco DECIMAL(5, 2) NOT NULL
 );
 
 CREATE TABLE vendas (
-     id INT AUTO_INCREMENT PRIMARY KEY,
-     descricao VARCHAR(50) NOT NULL,
+     id INT AUTO_INCREMENT PRIMARY KEY UNIQUE,
+     descricao VARCHAR(100) NOT NULL,
      preco DECIMAL(5, 2) NOT NULL,
      horario_venda TIMESTAMP(0) NOT NULL
 );

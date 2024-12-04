@@ -30,7 +30,6 @@ export default function ComprarIngresso() {
   }, []);
 
   function onClick(row: Sessao | Assento) {
-    console.log(row);
     if (!step) {
       axios
         .get("/api/assentos", {
@@ -45,6 +44,8 @@ export default function ComprarIngresso() {
           setData(res.data);
         });
     } else {
+      console.log("Selected sessions", selectedSession.current);
+      console.log("row id: ", row.id);
       const resAxios = axios
         .post("/api/ingressos", {
           id_sessao: selectedSession.current,

@@ -60,7 +60,7 @@ model sessoes {
 
 model vendas {
   id            Int      @id @default(autoincrement()) @unique
-  descricao     String   @db.VarChar(50)
+  descricao     String   @db.VarChar(100)
   preco         Decimal  @db.Decimal(5, 2)
   horario_venda DateTime @db.Timestamp(0)
 }
